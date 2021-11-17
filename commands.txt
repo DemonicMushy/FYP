@@ -1,0 +1,2 @@
+python train.py --scenario tag_adv_comm_and_direction --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_adv_comm_and_direction-c0-60000/" --exp-name tag_adv_comm_and_direction_c0 --benchmark
+python train.py --scenario simple_tag --num-adversaries 3 --num-episodes 10000 --save-dir "./policy-simple_tag-discrete-60000/" --exp-name simple_tag --benchmark

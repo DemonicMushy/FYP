@@ -9,11 +9,9 @@ class Scenario(BaseScenario):
         num_good = 1
         num_adversaries = 3
         num_obstacles = 2
-        good_sight_range = 5
-        adversaries_sight_range = -1
         world = World()
         # set any world properties first
-        world.dim_c = 0  # set the communication dimension
+        world.dim_c = 4  # set the communication dimension
         num_good_agents = num_good
         num_adversaries = num_adversaries
         num_agents = num_adversaries + num_good_agents
@@ -30,9 +28,6 @@ class Scenario(BaseScenario):
             agent.size = 0.075 if agent.adversary else 0.05
             agent.accel = 3.0 if agent.adversary else 4.0
             agent.max_speed = 1.0 if agent.adversary else 1.3
-            agent.sight_range = (
-                adversaries_sight_range if agent.adversary else good_sight_range
-            )
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
         for i, landmark in enumerate(world.landmarks):
@@ -151,25 +146,7 @@ class Scenario(BaseScenario):
                         rew += 10
         return rew
 
-    def withinSightRange(self, agent, other):
-        if agent.sight_range == -1:
-            # all seeing entity
-            return True
-        relative_pos = other.state.p_pos - agent.state.p_pos
-        relative_dist_squared = abs(pow(relative_pos[0], 2) - pow(relative_pos[1], 2))
-
-        if relative_dist_squared <= pow(agent.sight_range, 2):
-            return True
-        else:
-            return False
-
-    def adversaryNearby(self, good_agent, world):
-        for adv in self.adversaries(world):
-            if self.withinSightRange(good_agent, adv):
-                return True
-
     def observation(self, agent, world):
-
         observation = (
             self.adversary_observation(agent, world)
             if agent.adversary
@@ -185,47 +162,24 @@ class Scenario(BaseScenario):
         entity_pos = []
         for entity in world.landmarks:
             if not entity.boundary:
-                if self.withinSightRange(agent, entity):
-                    entity_pos.append(entity.state.p_pos - agent.state.p_pos)
+                entity_pos.append(entity.state.p_pos - agent.state.p_pos)
         # communication of all other agents
         comm = []
-        friendly_pos = []
-        friendly_vel = []
-        enemy_pos = []
-        enemy_vel = []
+        other_pos = []
+        other_vel = []
         for other in world.agents:
-            if other is agent:  # check for itself
-                continue
-            if not other.adversary:
-                if self.withinSightRange(agent, other):
-                    # check if other agent is within agent's sight range
-                    friendly_pos.append(other.state.p_pos - agent.state.p_pos)
-                    friendly_vel.append(other.state.p_vel)
-            elif other.adversary:
-                if self.withinSightRange(agent, other):
-                    # check if other agent is within agent's sight range
-                    enemy_pos.append(other.state.p_pos - agent.state.p_pos)
-                    enemy_vel.append(other.state.p_vel)
-        for other in self.good_agents(world):
             if other is agent:
                 continue
-            comm_temp = []
-            comm_temp.append(other.state.p_pos - agent.state.p_pos)
-            for adv in self.adversaries(world):
-                if self.withinSightRange(other, adv):
-                    comm_temp.append(adv.state.p_pos - other.state.p_pos)
-            if len(comm_temp) > 0:
-                comm.append(comm_temp)
-
+            comm.append(other.state.c)
+            other_pos.append(other.state.p_pos - agent.state.p_pos)
+            if not other.adversary:
+                other_vel.append(other.state.p_vel)
         return np.concatenate(
             [agent.state.p_vel]
             + [agent.state.p_pos]
             + entity_pos
-            + friendly_pos
-            + friendly_vel  # relative positions of agents
-            + enemy_pos  # velocity of friendly agents
-            + enemy_vel
-            # + comm
+            + other_pos
+            + other_vel
         )
 
     def adversary_observation(self, agent, world):
@@ -236,36 +190,22 @@ class Scenario(BaseScenario):
         entity_pos = []
         for entity in world.landmarks:
             if not entity.boundary:
-                if self.withinSightRange(agent, entity):
-                    entity_pos.append(entity.state.p_pos - agent.state.p_pos)
+                entity_pos.append(entity.state.p_pos - agent.state.p_pos)
         # communication of all other agents
         comm = []
-        friendly_pos = []
-        friendly_vel = []
-        enemy_pos = []
-        enemy_vel = []
+        other_pos = []
         for other in world.agents:
             if other is agent:  # check for itself
                 continue
-            # comm.append(other.state.c)
-            if other.adversary:
-                if self.withinSightRange(agent, other):
-                    # check if other agent is within agent's sight range
-                    friendly_pos.append(other.state.p_pos - agent.state.p_pos)
-                    friendly_vel.append(other.state.p_vel)
-            elif not other.adversary:
-                if self.withinSightRange(agent, other):
-                    # check if other agent is within agent's sight range
-                    enemy_pos.append(other.state.p_pos - agent.state.p_pos)
-                    enemy_vel.append(other.state.p_vel)
+            if not other.adversary:
+                other_pos.append(other.state.p_pos - agent.state.p_pos)
+            elif other.adversary:
+                comm.append(other.state.c)
 
         return np.concatenate(
             [agent.state.p_vel]
             + [agent.state.p_pos]
             + entity_pos
-            + friendly_pos  # relative positions of agents
-            + friendly_vel  # velocity of friendly agents
-            + enemy_pos
-            + enemy_vel
-            # + comm
+            + other_pos
+            + comm
         )
