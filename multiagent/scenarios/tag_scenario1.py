@@ -1,32 +1,27 @@
 import numpy as np
-
-from multiagent.core import Agent, Landmark, World
+from multiagent.core import World, Agent, Landmark
 from multiagent.scenario import BaseScenario
 
 
 class Scenario(BaseScenario):
     def make_world(self):
-        num_good = 1
-        num_adversaries = 3
-        num_obstacles = 2
         world = World()
         # set any world properties first
-        world.dim_c = 4  # set the communication dimension
-        num_good_agents = num_good
-        num_adversaries = num_adversaries
+        world.dim_c = 0
+        num_good_agents = 1
+        num_adversaries = 3
         num_agents = num_adversaries + num_good_agents
-        num_landmarks = num_obstacles
+        num_landmarks = 2
         # add agents
         world.agents = [Agent() for i in range(num_agents)]
         for i, agent in enumerate(world.agents):
-            agent.adversary = True if i < num_adversaries else False
-            base_name = "adversary" if agent.adversary else "agent"
-            base_index = i if i < num_adversaries else i - num_adversaries
-            agent.name = f"{base_name}_{base_index}"
+            agent.name = "agent %d" % i
             agent.collide = True
-            agent.silent = False  # !!! important
+            agent.silent = True
+            agent.adversary = True if i < num_adversaries else False
             agent.size = 0.075 if agent.adversary else 0.05
             agent.accel = 3.0 if agent.adversary else 4.0
+            # agent.accel = 20.0 if agent.adversary else 25.0
             agent.max_speed = 1.0 if agent.adversary else 1.3
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
@@ -36,6 +31,7 @@ class Scenario(BaseScenario):
             landmark.movable = False
             landmark.size = 0.2
             landmark.boundary = False
+        # make initial conditions
         self.reset_world(world)
         return world
 
@@ -136,8 +132,10 @@ class Scenario(BaseScenario):
         ):  # reward can optionally be shaped (decreased reward for increased distance from agents)
             for adv in adversaries:
                 rew -= 0.1 * min(
-                    np.sqrt(np.sum(np.square(a.state.p_pos - adv.state.p_pos)))
-                    for a in agents
+                    [
+                        np.sqrt(np.sum(np.square(a.state.p_pos - adv.state.p_pos)))
+                        for a in agents
+                    ]
                 )
         if agent.collide:
             for ag in agents:
@@ -165,21 +163,22 @@ class Scenario(BaseScenario):
                 entity_pos.append(entity.state.p_pos - agent.state.p_pos)
         # communication of all other agents
         comm = []
+        friendly_pos = []
         other_pos = []
-        other_vel = []
         for other in world.agents:
             if other is agent:
                 continue
-            comm.append(other.state.c)
-            other_pos.append(other.state.p_pos - agent.state.p_pos)
+            # comm.append(other.state.c)
             if not other.adversary:
-                other_vel.append(other.state.p_vel)
+                friendly_pos.append(other.state.p_pos - agent.state.p_pos)
+            else:
+                other_pos.append(other.state.p_pos - agent.state.p_pos)
         return np.concatenate(
             [agent.state.p_vel]
             + [agent.state.p_pos]
             + entity_pos
+            + friendly_pos
             + other_pos
-            + other_vel
         )
 
     def adversary_observation(self, agent, world):
@@ -193,17 +192,51 @@ class Scenario(BaseScenario):
                 entity_pos.append(entity.state.p_pos - agent.state.p_pos)
         # communication of all other agents
         comm = []
+        friendly_pos = []
         other_pos = []
         for other in world.agents:
-            if other is agent:  # check for itself
+            if other is agent:
                 continue
+            # comm.append(other.state.c)
             if not other.adversary:
-                other_vector = other.state.p_pos - agent.state.p_pos
-                other_vector_hat = other_vector / np.linalg.norm(other_vector)
-                other_pos.append(other_vector_hat)
-            elif other.adversary:
-                comm.append(other.state.c)
+                other_pos.append(other.state.p_pos - agent.state.p_pos)
+            else:
+                vec = other.state.p_pos - agent.state.p_pos
+                vec_hat = vec / np.linalg.norm(vec)
+                friendly_pos.append(vec_hat)
+                # comm.append(other.forced_comm)
+        
+        for cAgent in world.agents:
+            if cAgent is agent:
+                continue
+            if not cAgent.adversary:
+                continue
+            lst = []
+            # reference to communicating friendly agent
+            if cAgent.adversary:
+                # to get distance from self to other agents
+                for another in world.agents:
+                    if another is agent: # not self
+                        continue
+                    if another is cAgent: # not communicating agent
+                        continue
+                    # communicating agent tells distance between agent and other agent
+                    lst.append(np.linalg.norm(agent.state.p_pos - another.state.p_pos))                
+            comm.append(lst)
+        
+        # print("-----")
+        # print([agent.state.p_vel])
+        # print([agent.state.p_pos])
+        # print(entity_pos)
+        # print(friendly_pos)
+        # print(other_pos)
+        # print(comm)
 
         return np.concatenate(
-            [agent.state.p_vel] + [agent.state.p_pos] + entity_pos + other_pos + comm
+            [agent.state.p_vel]
+            + [agent.state.p_pos]
+            + entity_pos
+            + friendly_pos
+            + other_pos
+            + comm
         )

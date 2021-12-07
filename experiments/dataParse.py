@@ -1,39 +1,68 @@
 from episode import Episode
 import pickle
 import os
+import re
+import pandas as pd
 
 
-def parseFiles(dir, filename):
-    objs = []
+def parseFiles(dir):
+    objs = {}
     for subdir, dirs, files in os.walk(dir):
+        basenames = []
         for file in files:
-            if filename in file:
-                with open(dir + file, "rb") as fp:
-                    obj = pickle.load(fp)
-                    objs += obj
+            basename = re.split("-", file)[:-1]
+            basename = '-'.join(basename)
+            if basename not in basenames:
+                basenames.append(basename)
+        basenames.sort()
+        for basename in basenames:
+            episodes = []
+            objs[basename] = {}
+            for file in files:
+                n = re.split("-", file)[:-1]
+                n = '-'.join(n)
+                if basename == n:
+                    with open(dir + file, "rb") as fp:
+                        obj = pickle.load(fp)
+                        episodes += obj
+            objs[basename]["episodes"] = episodes
+            objs[basename]["total_episodes"] = len(episodes)
     return objs
 
 
-def getTotalEpisodesWithCaptures(episodes):
+def getTotalEpisodesWithCaptures(obj):
     count = 0
-    for epi in episodes:
+    for epi in obj["episodes"]:
         count += 1 if epi.num_captures > 0 else 0
-    return count
+    obj["num_captures"] = count
 
 
-def getAverageFirstCaptureTimestep(episodes):
+def getAverageFirstCaptureTimestep(obj):
     count = 0
-    for epi in episodes:
+    for epi in obj["episodes"]:
         count += 1 if epi.first_capture_timestep != None else 0
-    return count
+    obj["first_capture_timestep"] = count
 
 
 if __name__ == "__main__":
     fileDir = "./benchmark_files/"
-    filename = "simple_tag"
-    episodes = parseFiles(fileDir, filename)
-    totalEpisodes = len(episodes)
-    totalEpisodesWithCaptures = getTotalEpisodesWithCaptures(episodes)
+    experiments = parseFiles(fileDir)
+    df = pd.DataFrame(
+        columns=["Scenario", "Total Episodes", "Num Captures", "Capture Rate"]
+    )
+    print(df)
+    for exp in experiments:
+        getTotalEpisodesWithCaptures(experiments[exp])
+        getAverageFirstCaptureTimestep(experiments[exp])
 
-    print("Total Episodes: ", totalEpisodes)
-    print("Total Episodes with captures: ", totalEpisodesWithCaptures)
+    for exp in experiments:
+        dict1 = {
+            "Scenario": exp,
+            "Total Episodes": experiments[exp]["total_episodes"],
+            "Num Captures": experiments[exp]["num_captures"],
+            "Capture Rate": "{:.2%}".format(
+                experiments[exp]["num_captures"] / experiments[exp]["total_episodes"]
+            ),
+        }
+        df = df.append(dict1, ignore_index=True)
+    print(df)

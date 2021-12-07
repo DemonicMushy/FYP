@@ -1,2 +1,16 @@
-python train.py --scenario tag_adv_comm_and_direction --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_adv_comm_and_direction-c0-60000/" --exp-name tag_adv_comm_and_direction_c0 --benchmark
 python train.py --scenario simple_tag --num-adversaries 3 --num-episodes 10000 --save-dir "./policy-simple_tag-discrete-60000/" --exp-name simple_tag --benchmark
+python train.py --scenario tag_adv_comm_and_direction --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_adv_comm_and_direction-c4-60000/" --exp-name tag_adv_comm_and_direction_c4 --benchmark
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario_base-60000/" --exp-name tag_scenario_base --benchmark
+python train.py --scenario tag_scenario1 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario1-60000/" --exp-name tag_scenario1 --benchmark
+python train.py --scenario tag_scenario1 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario1-120000/" --exp-name tag_scenario1_120000 --benchmark
+python train.py --scenario tag_scenario1 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario1_fix_2-60000/" --exp-name tag_scenario1_fix_2 --benchmark
+python train.py --scenario tag_scenario2 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario2-60000/" --exp-name tag_scenario2 --benchmark
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario_base_2-60000/" --exp-name tag_scenario_base_2 --benchmark
+python train.py --scenario tag_scenario3 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario3-60000/" --exp-name tag_scenario3 --benchmark
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 10000 --save-dir "./policy-tag_scenario_base_2-10000/" --exp-name tag_scenario_base_2-10000 --benchmark
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 20000 --save-dir "./policy-tag_scenario_base_2-20000/" --exp-name tag_scenario_base_2-20000 --benchmark
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 30000 --save-dir "./policy-tag_scenario_base_2-30000/" --exp-name tag_scenario_base_2-30000 --benchmark
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 40000 --save-dir "./policy-tag_scenario_base_2-40000/" --exp-name tag_scenario_base_2-40000 --benchmark
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 50000 --save-dir "./policy-tag_scenario_base_2-50000/" --exp-name tag_scenario_base_2-50000 --benchmark
+python train.py --scenario tag_scenario4 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario4-60000/" --exp-name tag_scenario4 --benchmark
+python train.py --scenario tag_scenario3 --num-adversaries 3 --num-episodes 10000 --save-dir "./policy-tag_scenario3-10000/" --exp-name tag_scenario3-10000 --benchmark

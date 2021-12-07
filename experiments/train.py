@@ -280,7 +280,7 @@ def train(arglist):
                         episode_objects = []
                         num_files_written += 1
                         print(f"{num} iterations recorded and benchmarked, {num_files_written} files total")
-                    if (num_files_written == 5):
+                    if (num_files_written == 20):
                         break
                 continue
 

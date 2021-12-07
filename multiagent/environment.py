@@ -190,6 +190,22 @@ class MultiAgentEnv(gym.Env):
             action = action[1:]
         # make sure we used all elements of action
         assert len(action) == 0
+        ##############################################
+        tracking = []
+        agent.forced_comm = []
+        for agnt in self.agents:
+            if agnt is agent:
+                continue
+            if not agnt.adversary:
+                continue
+            tracking.append(agnt)
+            for agnt2 in self.agents:
+                if agnt2 in tracking:
+                    continue
+                if not agnt2.adversary:
+                    continue
+                agent.forced_comm.append(np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos))
+                
 
     # reset rendering assets
     def _reset_render(self):
