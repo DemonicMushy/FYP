@@ -196,15 +196,19 @@ class MultiAgentEnv(gym.Env):
         for agnt in self.agents:
             if agnt is agent:
                 continue
-            if not agnt.adversary:
-                continue
+            # if not agnt.adversary: # removed for fix
+            #     continue
             tracking.append(agnt)
             for agnt2 in self.agents:
                 if agnt2 in tracking:
                     continue
-                if not agnt2.adversary:
+                if agnt2 is agent: # added for fix
                     continue
+                # if not agnt2.adversary: # removed for fix
+                #     continue
+                # print(agnt.name, agnt2.name)
                 agent.forced_comm.append(np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos))
+        # print(agent.name, "action stage", agent.forced_comm)
                 
 
     # reset rendering assets

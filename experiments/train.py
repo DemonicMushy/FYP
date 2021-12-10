@@ -210,6 +210,7 @@ def train(arglist):
 
         print(datetime.datetime.now())
         while True:
+            # print('')
             # get action
             action_n = [agent.action(obs) for agent, obs in zip(trainers, obs_n)]
             # environment step

@@ -218,6 +218,7 @@ class Scenario(BaseScenario):
             if cAgent.adversary:
                 # to get distance from self to other agents (A-C)(A-D)(C-D)
                 tracking = []
+                # print(cAgent.name)
                 for another in world.agents:
                     tracking.append(another)
                     for another2 in world.agents:
@@ -228,6 +229,7 @@ class Scenario(BaseScenario):
                         if another2 is cAgent: # not B
                             continue
                         # communicating agent tells distance between agent and other agent
+                        # print(another2.name, another.name)
                         lst.append(np.linalg.norm(another2.state.p_pos - another.state.p_pos))                
                 comm.append(lst)
 
@@ -238,6 +240,8 @@ class Scenario(BaseScenario):
         # print(friendly_pos)
         # print(other_pos)
         # print(comm)
+
+        # print(agent.name, "observation stage", comm)
 
         return np.concatenate(
             [agent.state.p_vel]
