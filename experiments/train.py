@@ -94,6 +94,12 @@ def parse_args():
         default="./learning_curves/",
         help="directory where plot data is saved",
     )
+    parser.add_argument(
+        "--use-same-good-agents",
+        action="store_true",
+        default=False,
+        help="whether to use fixed good agent policy"
+    )
     return parser.parse_args()
 
 
@@ -179,12 +185,34 @@ def train(arglist):
         # Initialize
         U.initialize()
 
+        ### to use policies from different files
+        if (arglist.use_same_good_agents):
+            goodAgentVars = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_3"
+            )
+            advAgentsVars = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_0"
+            ) + tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_1"
+            ) + tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_2"
+            )
+            ###
+            goodAgentPolicy = "./policy-tag_scenario_base_2-60000/"
+
+            saver = tf.compat.v1.train.Saver(goodAgentVars)
+            U.load_state(goodAgentPolicy, saver=saver)
+
         # Load previous results, if necessary
         if arglist.load_dir == "":
             arglist.load_dir = arglist.save_dir
         if arglist.display or arglist.restore or arglist.benchmark:
             print("Loading previous state...")
-            U.load_state(arglist.load_dir)
+            if arglist.use_same_good_agents:
+                saver = tf.compat.v1.train.Saver(advAgentsVars)
+                U.load_state(arglist.load_dir, saver=saver)
+            else:
+                U.load_state(arglist.load_dir)
 
         episode_rewards = [0.0]  # sum of rewards for all agents
         agent_rewards = [[0.0] for _ in range(env.n)]  # individual agent reward

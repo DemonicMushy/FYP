@@ -18,3 +18,20 @@ python train.py --scenario tag_scenario4 --num-adversaries 3 --num-episodes 6000
 python train.py --scenario tag_scenario3 --num-adversaries 3 --num-episodes 10000 --save-dir "./policy-tag_scenario3-10000/" --exp-name tag_scenario3-10000 --benchmark
 
 python train.py --scenario tag_scenario3 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario3_fix-60000/" --exp-name tag_scenario3_fix --benchmark
+python train.py --scenario tag_scenario3 --num-adversaries 3 --num-episodes 10000 --save-dir "./policy-tag_scenario3_fix-10000/" --exp-name tag_scenario3_fix-10000 --benchmark
+python train.py --scenario tag_scenario3 --num-adversaries 3 --num-episodes 1000 --save-dir "./policy-tag_scenario3_fix-1000/" --exp-name tag_scenario3_fix-1000 
+
+python train.py --scenario tag_scenario_base_wDistance --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario_base_wdistance-60000/" --exp-name tag_scenario_base_wDistance --benchmark
+python train.py --scenario tag_scenario_base_wDistanceAll --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario_base_wdistanceAll-60000/" --exp-name tag_scenario_base_wDistanceAll --benchmark
+python train.py --scenario tag_scenario3_woDirection --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario3_woDirection-60000/" --exp-name tag_scenario3_woDirection --benchmark
+
+python train.py --scenario tag_scenario3 --num-adversaries 3 --save-dir "./z_test/" --load-dir "./z_test/" --exp-name z_test --display
+
+python train.py --scenario tag_scenario_base --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario_base_2-60000/" --exp-name fixedGA_tag_scenario_base_2 --use-same-good-agent --benchmark
+python train.py --scenario tag_scenario2 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario2-60000/" --exp-name fixedGA_tag_scenario2 --use-same-good-agent --benchmark
+python train.py --scenario tag_scenario3 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario3_fix-60000/" --exp-name fixedGA_tag_scenario3 --use-same-good-agent --benchmark
+python train.py --scenario tag_scenario4 --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario4-60000/" --exp-name fixedGA_tag_scenario4 --use-same-good-agent --benchmark
+python train.py --scenario tag_scenario_base_wDistance --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario_base_wdistance-60000/" --exp-name fixedGA_tag_scenario_base_wDistance --use-same-good-agent --benchmark
+python train.py --scenario tag_scenario_base_wDistanceAll --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario_base_wdistanceAll-60000/" --exp-name fixedGA_tag_scenario_base_wDistanceAll --use-same-good-agent --benchmark
+python train.py --scenario tag_scenario3_woDirection --num-adversaries 3 --num-episodes 60000 --save-dir "./policy-tag_scenario3_woDirection-60000/" --exp-name fixedGA_tag_scenario3_woDirection --use-same-good-agent --benchmark
+
