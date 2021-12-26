@@ -196,19 +196,20 @@ class MultiAgentEnv(gym.Env):
         for agnt in self.agents:
             if agnt is agent:
                 continue
-            # if not agnt.adversary: # removed for fix
-            #     continue
+            for entity in self.world.landmarks:
+                if not entity.boundary:
+                    agent.forced_comm.append(np.linalg.norm(entity.state.p_pos - agnt.state.p_pos))
+
+        for agnt in self.agents:
+            if agnt is agent:
+                continue
             tracking.append(agnt)
             for agnt2 in self.agents:
                 if agnt2 in tracking:
                     continue
-                if agnt2 is agent: # added for fix
+                if agnt2 is agent:
                     continue
-                # if not agnt2.adversary: # removed for fix
-                #     continue
-                # print(agnt.name, agnt2.name)
                 agent.forced_comm.append(np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos))
-        # print(agent.name, "action stage", agent.forced_comm)
                 
 
     # reset rendering assets

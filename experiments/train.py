@@ -98,7 +98,7 @@ def parse_args():
         "--use-same-good-agents",
         action="store_true",
         default=False,
-        help="whether to use fixed good agent policy"
+        help="whether to use fixed good agent policy",
     )
     return parser.parse_args()
 
@@ -182,23 +182,27 @@ def train(arglist):
             )
         )
 
+        advAgentsNames = ["agent_%d" % i for i in range(num_adversaries)]
+        goodAgentsNames = ["agent_%d" % i for i in range(num_adversaries, env.n)]
+
         # Initialize
         U.initialize()
 
         ### to use policies from different files
-        if (arglist.use_same_good_agents):
-            goodAgentVars = tf.compat.v1.get_collection(
-                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_3"
-            )
-            advAgentsVars = tf.compat.v1.get_collection(
-                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_0"
-            ) + tf.compat.v1.get_collection(
-                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_1"
-            ) + tf.compat.v1.get_collection(
-                tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="agent_2"
-            )
+        if arglist.use_same_good_agents:
+            goodAgentVars = []
+            advAgentVars = []
+            for _name in goodAgentsNames:
+                goodAgentVars += tf.compat.v1.get_collection(
+                    tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope=_name
+                )
+            for _name in advAgentsNames:
+                advAgentVars += tf.compat.v1.get_collection(
+                    tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope=_name
+                )
             ###
-            goodAgentPolicy = "./policy-tag_scenario_base_2-60000/"
+            goodAgentPolicy = "./policy-tag_s_base-40000-sameGA/"
+            # goodAgentPolicy = "./policy-tag_scenario_base_2-50000/"
 
             saver = tf.compat.v1.train.Saver(goodAgentVars)
             U.load_state(goodAgentPolicy, saver=saver)
@@ -209,7 +213,7 @@ def train(arglist):
         if arglist.display or arglist.restore or arglist.benchmark:
             print("Loading previous state...")
             if arglist.use_same_good_agents:
-                saver = tf.compat.v1.train.Saver(advAgentsVars)
+                saver = tf.compat.v1.train.Saver(advAgentVars)
                 U.load_state(arglist.load_dir, saver=saver)
             else:
                 U.load_state(arglist.load_dir)
@@ -308,8 +312,10 @@ def train(arglist):
                         text = ""
                         episode_objects = []
                         num_files_written += 1
-                        print(f"{num} iterations recorded and benchmarked, {num_files_written} files total")
-                    if (num_files_written == 20):
+                        print(
+                            f"{num} iterations recorded and benchmarked, {num_files_written} files total"
+                        )
+                    if num_files_written == 20:
                         break
                 continue
 
@@ -322,9 +328,23 @@ def train(arglist):
             # update all trainers, if not in display or benchmark mode
             loss = None
             for agent in trainers:
-                agent.preupdate()
+                if arglist.use_same_good_agents:
+                    if agent.name in advAgentsNames:
+                        agent.preupdate()
+                    else:
+                        # do not update good agent policy
+                        continue
+                else:
+                    agent.preupdate()
             for agent in trainers:
-                loss = agent.update(trainers, train_step)
+                if arglist.use_same_good_agents:
+                    if agent.name in advAgentsNames:
+                        loss = agent.update(trainers, train_step)
+                    else:
+                        # do not update good agent policy
+                        continue
+                else:
+                    loss = agent.update(trainers, train_step)
 
             # save model, display training output
             if terminal and (len(episode_rewards) % arglist.save_rate == 0):
