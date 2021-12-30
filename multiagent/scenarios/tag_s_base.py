@@ -158,11 +158,13 @@ class Scenario(BaseScenario):
         # blocked by landmarks?
         # get positions of all entities in this agent's reference frame
         entity_dir = []
+        distances = []
         for entity in world.landmarks:
             if not entity.boundary:
                 vec = entity.state.p_pos - agent.state.p_pos
                 vec_hat = vec / np.linalg.norm(vec)
                 entity_dir.append(vec_hat)
+                distances.append(np.linalg.norm(vec))
         # communication of all other agents
         friendly_dir = []
         other_dir = []
@@ -173,10 +175,12 @@ class Scenario(BaseScenario):
                 vec = other.state.p_pos - agent.state.p_pos
                 vec_hat = vec / np.linalg.norm(vec)
                 friendly_dir.append(vec_hat)
+                distances.append(np.linalg.norm(vec))
             else:
                 vec = other.state.p_pos - agent.state.p_pos
                 vec_hat = vec / np.linalg.norm(vec)
                 other_dir.append(vec_hat)
+                distances.append(np.linalg.norm(vec))
 
         return np.concatenate(
             [agent.state.p_vel]
@@ -184,6 +188,7 @@ class Scenario(BaseScenario):
             + entity_dir
             + friendly_dir
             + other_dir
+            + [distances]
         )
 
     def adversary_observation(self, agent, world):
@@ -203,7 +208,7 @@ class Scenario(BaseScenario):
         for other in world.agents:
             if other is agent:
                 continue
-            if not other.adversary:
+            if other.adversary:
                 vec = other.state.p_pos - agent.state.p_pos
                 vec_hat = vec / np.linalg.norm(vec)
                 friendly_dir.append(vec_hat)

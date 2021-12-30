@@ -161,38 +161,28 @@ class Scenario(BaseScenario):
         # we can implement the agent's ability to 'listen' to certain agents here
         # blocked by landmarks?
         # get positions of all entities in this agent's reference frame
-        entity_dir = []
-        distances = []
+        entity_pos = []
         for entity in world.landmarks:
             if not entity.boundary:
-                vec = entity.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                entity_dir.append(vec_hat)
-                distances.append(np.linalg.norm(vec))
+                entity_pos.append(entity.state.p_pos - agent.state.p_pos)
         # communication of all other agents
-        friendly_dir = []
-        other_dir = []
+        comm = []
+        friendly_pos = []
+        other_pos = []
         for other in world.agents:
             if other is agent:
                 continue
+            # comm.append(other.state.c)
             if not other.adversary:
-                vec = other.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                friendly_dir.append(vec_hat)
-                distances.append(np.linalg.norm(vec))
+                friendly_pos.append(other.state.p_pos - agent.state.p_pos)
             else:
-                vec = other.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                other_dir.append(vec_hat)
-                distances.append(np.linalg.norm(vec))
-
+                other_pos.append(other.state.p_pos - agent.state.p_pos)
         return np.concatenate(
             [agent.state.p_vel]
             + [agent.state.p_pos]
-            + entity_dir
-            + friendly_dir
-            + other_dir
-            + [distances]
+            + entity_pos
+            + friendly_pos
+            + other_pos
         )
 
     def adversary_observation(self, agent, world):

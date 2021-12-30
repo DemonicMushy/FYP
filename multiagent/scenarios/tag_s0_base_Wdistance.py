@@ -23,10 +23,6 @@ class Scenario(BaseScenario):
             agent.accel = 3.0 if agent.adversary else 4.0
             # agent.accel = 20.0 if agent.adversary else 25.0
             agent.max_speed = 1.0 if agent.adversary else 1.3
-            # custom forced communication
-            agent.forced_comm = [
-                0 for i in (range(num_agents - 1 + (num_agents - 1) * (num_landmarks)))
-            ]
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
         for i, landmark in enumerate(world.landmarks):
@@ -161,8 +157,37 @@ class Scenario(BaseScenario):
         # we can implement the agent's ability to 'listen' to certain agents here
         # blocked by landmarks?
         # get positions of all entities in this agent's reference frame
-        entity_dir = []
+        entity_pos = []
+        for entity in world.landmarks:
+            if not entity.boundary:
+                entity_pos.append(entity.state.p_pos - agent.state.p_pos)
+        # communication of all other agents
+        comm = []
+        friendly_pos = []
+        other_pos = []
+        for other in world.agents:
+            if other is agent:
+                continue
+            # comm.append(other.state.c)
+            if not other.adversary:
+                friendly_pos.append(other.state.p_pos - agent.state.p_pos)
+            else:
+                other_pos.append(other.state.p_pos - agent.state.p_pos)
+        return np.concatenate(
+            [agent.state.p_vel]
+            + [agent.state.p_pos]
+            + entity_pos
+            + friendly_pos
+            + other_pos
+        )
+
+    def adversary_observation(self, agent, world):
+        # here is where each agent's observation will be
+        # we can implement the agent's ability to 'listen' to certain agents here
+        # blocked by landmarks?
+        # get positions of all entities in this agent's reference frame
         distances = []
+        entity_dir = []
         for entity in world.landmarks:
             if not entity.boundary:
                 vec = entity.state.p_pos - agent.state.p_pos
@@ -175,7 +200,7 @@ class Scenario(BaseScenario):
         for other in world.agents:
             if other is agent:
                 continue
-            if not other.adversary:
+            if other.adversary:
                 vec = other.state.p_pos - agent.state.p_pos
                 vec_hat = vec / np.linalg.norm(vec)
                 friendly_dir.append(vec_hat)
@@ -193,55 +218,4 @@ class Scenario(BaseScenario):
             + friendly_dir
             + other_dir
             + [distances]
-        )
-
-    def adversary_observation(self, agent, world):
-        # here is where each agent's observation will be
-        # we can implement the agent's ability to 'listen' to certain agents here
-        # blocked by landmarks?
-        # get positions of all entities in this agent's reference frame
-        entity_dir = []
-        for entity in world.landmarks:
-            if not entity.boundary:
-                vec = entity.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                entity_dir.append(vec_hat)
-        # communication of all other agents
-        comm = []
-        friendly_dir = []
-        other_dir = []
-        for other in world.agents:
-            if other is agent:
-                continue
-            if other.adversary:
-                vec = other.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                friendly_dir.append(vec_hat)
-            else:
-                vec = other.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                other_dir.append(vec_hat)
-
-        for cAgent in world.agents:
-            if cAgent is agent:
-                continue
-            if not cAgent.adversary:
-                continue
-            comm.append(cAgent.forced_comm)
-
-        # print("-----")
-        # print([agent.state.p_vel])
-        # print([agent.state.p_pos])
-        # print(entity_dir)
-        # print(friendly_dir)
-        # print(other_dir)
-        # print(comm)
-
-        return np.concatenate(
-            [agent.state.p_vel]
-            + [agent.state.p_pos]
-            + entity_dir
-            + friendly_dir
-            + other_dir
-            + comm
         )

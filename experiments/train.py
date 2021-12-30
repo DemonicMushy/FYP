@@ -201,8 +201,8 @@ def train(arglist):
                     tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope=_name
                 )
             ###
-            goodAgentPolicy = "./policy-tag_s_base-40000-sameGA/"
-            # goodAgentPolicy = "./policy-tag_scenario_base_2-50000/"
+            # goodAgentPolicy = "./policy-tag_s_base-40000-sameGA/"
+            goodAgentPolicy = "./policy-tag_s_base-60000/"
 
             saver = tf.compat.v1.train.Saver(goodAgentVars)
             U.load_state(goodAgentPolicy, saver=saver)

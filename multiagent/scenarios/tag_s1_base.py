@@ -19,17 +19,20 @@ class Scenario(BaseScenario):
             agent.collide = True
             agent.silent = True
             agent.adversary = True if i < num_adversaries else False
-            agent.size = 0.075 if agent.adversary else 0.05
-            agent.accel = 3.0 if agent.adversary else 4.0
+            # divide by 5
+            agent.size = 0.015 if agent.adversary else 0.01
+            # divide by 5
+            agent.accel = 0.6 if agent.adversary else 0.8
             # agent.accel = 20.0 if agent.adversary else 25.0
-            agent.max_speed = 1.0 if agent.adversary else 1.3
+            # divide by 5
+            agent.max_speed = 0.2 if agent.adversary else 0.26
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
         for i, landmark in enumerate(world.landmarks):
             landmark.name = "landmark %d" % i
             landmark.collide = True
             landmark.movable = False
-            landmark.size = 0.2
+            landmark.size = 0.04
             landmark.boundary = False
         # make initial conditions
         self.reset_world(world)
@@ -93,7 +96,7 @@ class Scenario(BaseScenario):
     def agent_reward(self, agent, world):
         # Agents are negatively rewarded if caught by adversaries
         rew = 0
-        shape = False
+        shape = True
         adversaries = self.adversaries(world)
         if (
             shape
@@ -124,7 +127,7 @@ class Scenario(BaseScenario):
     def adversary_reward(self, agent, world):
         # Adversaries are rewarded for collisions with agents
         rew = 0
-        shape = False
+        shape = True
         agents = self.good_agents(world)
         adversaries = self.adversaries(world)
         if (
@@ -157,28 +160,38 @@ class Scenario(BaseScenario):
         # we can implement the agent's ability to 'listen' to certain agents here
         # blocked by landmarks?
         # get positions of all entities in this agent's reference frame
-        entity_pos = []
+        entity_dir = []
+        distances = []
         for entity in world.landmarks:
             if not entity.boundary:
-                entity_pos.append(entity.state.p_pos - agent.state.p_pos)
+                vec = entity.state.p_pos - agent.state.p_pos
+                vec_hat = vec / np.linalg.norm(vec)
+                entity_dir.append(vec_hat)
+                distances.append(np.linalg.norm(vec))
         # communication of all other agents
-        comm = []
-        friendly_pos = []
-        other_pos = []
+        friendly_dir = []
+        other_dir = []
         for other in world.agents:
             if other is agent:
                 continue
-            # comm.append(other.state.c)
             if not other.adversary:
-                friendly_pos.append(other.state.p_pos - agent.state.p_pos)
+                vec = other.state.p_pos - agent.state.p_pos
+                vec_hat = vec / np.linalg.norm(vec)
+                friendly_dir.append(vec_hat)
+                distances.append(np.linalg.norm(vec))
             else:
-                other_pos.append(other.state.p_pos - agent.state.p_pos)
+                vec = other.state.p_pos - agent.state.p_pos
+                vec_hat = vec / np.linalg.norm(vec)
+                other_dir.append(vec_hat)
+                distances.append(np.linalg.norm(vec))
+
         return np.concatenate(
             [agent.state.p_vel]
             + [agent.state.p_pos]
-            + entity_pos
-            + friendly_pos
-            + other_pos
+            + entity_dir
+            + friendly_dir
+            + other_dir
+            + [distances]
         )
 
     def adversary_observation(self, agent, world):
