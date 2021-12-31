@@ -282,20 +282,27 @@ def train(arglist):
                 #     with open(file_name, 'wb') as fp:
                 #         pickle.dump(agent_info[:-1], fp)
                 #     break
+                def is_collision(agent1, agent2):
+                    delta_pos = agent1.state.p_pos - agent2.state.p_pos
+                    dist = np.sqrt(np.sum(np.square(delta_pos)))
+                    dist_min = agent1.size + agent2.size
+                    return True if dist < dist_min else False
 
                 for agent in env.agents:
                     if not agent.adversary:
-                        if env._get_reward(agent) == -10:
-                            captures += 1
-                            captures_timesteps.append(episode_step)
-                if done or terminal:
-                    text += str(captures) + ": " + str(captures_timesteps) + "\n"
+                        for a in env.agents:
+                            if a.adversary:
+                                if is_collision(agent, a):
+                                    captures += 1
+                                    captures_timesteps.append(episode_step)
+                if done or terminal: 
+                    # end of each episode
                     ep = Episode(captures, captures_timesteps)
                     episode_objects.append(ep)
                     captures = 0
                     captures_timesteps = []
                     benchmark_count += 1
-                    num = 1000
+                    num = 1000 # save every num episodes
                     if benchmark_count % num == 0:
                         file_name = (
                             arglist.benchmark_dir
@@ -308,8 +315,6 @@ def train(arglist):
                         )
                         with open(file_name, "wb") as fp:
                             pickle.dump(episode_objects, fp)
-                            # fp.write(text)
-                        text = ""
                         episode_objects = []
                         num_files_written += 1
                         print(
