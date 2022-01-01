@@ -1,7 +1,7 @@
 experiments/policy*
 experiments/benchmark_files*
 experiments/learning_curves*
-experiments/log.txt
+experiments/logs*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
