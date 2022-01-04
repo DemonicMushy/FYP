@@ -97,4 +97,5 @@ if __name__ == "__main__":
             f"Std (Per {bucketSize})": "{:.2f}".format(experiments[exp]['std'])
         }
         df = df.append(dict1, ignore_index=True)
+    pd.set_option('display.max_rows', None)
     print(df)

@@ -45,14 +45,14 @@ def generateFullCommand(restore, benchmark):
 
 if __name__ == "__main__":
 
-    numIterations = 12
+    numIterations = 15
 
     numEpisodes = 10000
     numUnits = 64
-    scenario = "tag_s_base"
+    scenario = "tag_s_comm"
 
-    initialDir = "./policy-tag_s_base_LONG"
-    initialExpName = "tag_s_base_LONG"
+    initialDir = "./policy-tag_s_comm_LONG"
+    initialExpName = "tag_s_comm_LONG"
 
     cmdNumEpisodes[1] = numEpisodes
     cmdNumUnits[1] = numUnits
@@ -74,7 +74,7 @@ if __name__ == "__main__":
                     restore=False, benchmark=True
                 )
             else:
-                loadDir = saveDir
+                loadDir = initialDir + f"_{(i-1)*numEpisodes}/"
                 saveDir = initialDir + f"_{i*numEpisodes}/"
                 cmdLoadDir[1] = loadDir
                 cmdSaveDir[1] = saveDir
@@ -85,6 +85,9 @@ if __name__ == "__main__":
 
             print(fullCommand)
             print(fullCommandBenchmark)
+
+            f.write(" ".join(fullCommand) + "\n")
+            f.write(" ".join(fullCommandBenchmark) + "\n")
 
             sp.run(fullCommand, stdout=f, text=True)
             sp.run(fullCommandBenchmark, stdout=f, text=True)
