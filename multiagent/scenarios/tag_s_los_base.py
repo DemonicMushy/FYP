@@ -1,6 +1,7 @@
 import numpy as np
 from multiagent.core import World, Agent, Landmark
 from multiagent.scenario import BaseScenario
+from multiagent import myUtils as MU
 
 
 class Scenario(BaseScenario):
@@ -199,26 +200,49 @@ class Scenario(BaseScenario):
         # we can implement the agent's ability to 'listen' to certain agents here
         # blocked by landmarks?
         # get positions of all entities in this agent's reference frame
+
+        # return this null vec if no line of sight
+        nullVector = [0 for i in agent.state.p_pos]
+
         entity_dir = []
         for entity in world.landmarks:
             if not entity.boundary:
-                vec = entity.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                entity_dir.append(vec_hat)
-        # communication of all other agents
+                for e in world.landmarks + world.agents:
+                    if e is agent:
+                        continue
+                    if e is entity:
+                        continue
+                    if MU.hasLineOfSight(agent, entity, e):
+                        vec = entity.state.p_pos - agent.state.p_pos
+                        vec_hat = vec / np.linalg.norm(vec)
+                        entity_dir.append(vec_hat)
+                    else:
+                        entity_dir.append(nullVector)
+
         friendly_dir = []
         other_dir = []
         for other in world.agents:
             if other is agent:
                 continue
-            if other.adversary:
-                vec = other.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                friendly_dir.append(vec_hat)
-            else:
-                vec = other.state.p_pos - agent.state.p_pos
-                vec_hat = vec / np.linalg.norm(vec)
-                other_dir.append(vec_hat)
+            for e in world.landmarks + world.agents:
+                if e is agent:
+                    continue
+                if e is other:
+                    continue
+                if MU.hasLineOfSight(agent, other, e):
+                    if other.adversary:
+                        vec = other.state.p_pos - agent.state.p_pos
+                        vec_hat = vec / np.linalg.norm(vec)
+                        friendly_dir.append(vec_hat)
+                    else:
+                        vec = other.state.p_pos - agent.state.p_pos
+                        vec_hat = vec / np.linalg.norm(vec)
+                        other_dir.append(vec_hat)
+                else:
+                    if other.adversary:
+                        friendly_dir.append(nullVector)
+                    else:
+                        other_dir.append(nullVector)
 
         return np.concatenate(
             [agent.state.p_vel]
