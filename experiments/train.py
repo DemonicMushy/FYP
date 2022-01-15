@@ -50,6 +50,18 @@ def parse_args():
     parser.add_argument(
         "--num-units", type=int, default=64, help="number of units in the mlp"
     )
+    parser.add_argument(
+        "--num-units-adv",
+        type=int,
+        default=64,
+        help="number of units in the mlp for adv agents",
+    )
+    parser.add_argument(
+        "--num-units-good",
+        type=int,
+        default=64,
+        help="number of units in the mlp for good agents",
+    )
     # Checkpointing
     parser.add_argument(
         "--exp-name", type=str, default="myExperiment", help="name of the experiment"
@@ -141,6 +153,7 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
     trainers = []
     model = mlp_model
     trainer = MADDPGAgentTrainer
+    # adversary agents
     for i in range(num_adversaries):
         trainers.append(
             trainer(
@@ -151,8 +164,12 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
                 i,
                 arglist,
                 local_q_func=(arglist.adv_policy == "ddpg"),
+                num_units=None
+                if arglist.num_units_adv == 64
+                else arglist.num_units_adv,
             )
         )
+    # good agents
     for i in range(num_adversaries, env.n):
         trainers.append(
             trainer(
@@ -163,6 +180,9 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
                 i,
                 arglist,
                 local_q_func=(arglist.good_policy == "ddpg"),
+                num_units=None
+                if arglist.num_units_adv == 64
+                else arglist.num_units_good,
             )
         )
     return trainers
@@ -295,14 +315,14 @@ def train(arglist):
                                 if is_collision(agent, a):
                                     captures += 1
                                     captures_timesteps.append(episode_step)
-                if done or terminal: 
+                if done or terminal:
                     # end of each episode
                     ep = Episode(captures, captures_timesteps)
                     episode_objects.append(ep)
                     captures = 0
                     captures_timesteps = []
                     benchmark_count += 1
-                    num = 1000 # save every num episodes
+                    num = 1000  # save every num episodes
                     if benchmark_count % num == 0:
                         file_name = (
                             arglist.benchmark_dir

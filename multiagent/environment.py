@@ -3,6 +3,7 @@ from gym import spaces
 from gym.envs.registration import EnvSpec
 import numpy as np
 from multiagent.multi_discrete import MultiDiscrete
+from multiagent import myUtils as MU
 
 # environment for all agents in the multiagent world
 # currently code assumes that no agents will be created/destroyed at runtime!
@@ -193,14 +194,29 @@ class MultiAgentEnv(gym.Env):
         ##############################################
         tracking = []
         agent.forced_comm = []
+        agent.forced_comm_los = []
         for agnt in self.agents:
             if agnt is agent:
                 continue
             for entity in self.world.landmarks:
+                hasLOS = []
                 if not entity.boundary:
                     agent.forced_comm.append(np.linalg.norm(entity.state.p_pos - agnt.state.p_pos))
+                    # check if e blocks agnt LOS to entity, NOT agent
+                    for e in self.world.landmarks + self.world.agents:
+                        if e is agnt:
+                            continue
+                        if e is entity:
+                            continue
+                        hasLOS.append(MU.hasLineOfSight(agnt, entity, e))
+                    if False in hasLOS:
+                        agent.forced_comm_los.append(0)
+                    else:
+                        vec = entity.state.p_pos - agnt.state.p_pos
+                        agent.forced_comm_los.append(np.linalg.norm(vec))
 
         for agnt in self.agents:
+            hasLOS = []
             if agnt is agent:
                 continue
             tracking.append(agnt)
@@ -210,6 +226,19 @@ class MultiAgentEnv(gym.Env):
                 if agnt2 is agent:
                     continue
                 agent.forced_comm.append(np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos))
+                # check if e blocks agnt LOS to agnt2, NOT agent
+                for e in self.world.landmarks + self.world.agents:
+                    if e is agnt:
+                        continue
+                    if e is agnt2:
+                        continue
+                    hasLOS.append(MU.hasLineOfSight(agnt, agnt2, e))
+                if False in hasLOS:
+                    agent.forced_comm_los.append(0)
+                else:
+                    # taking the len of vector so direction of vector does not matter
+                    vec = agnt2.state.p_pos - agnt.state.p_pos
+                    agent.forced_comm_los.append(np.linalg.norm(vec))
                 
 
     # reset rendering assets

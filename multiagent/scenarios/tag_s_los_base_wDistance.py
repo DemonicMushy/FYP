@@ -204,6 +204,7 @@ class Scenario(BaseScenario):
         # return this null vec if no line of sight
         nullVector = np.zeros(world.dim_p)
 
+        distances = []
         entity_dir = []
         for entity in world.landmarks:
             hasLOS = []
@@ -216,10 +217,12 @@ class Scenario(BaseScenario):
                     hasLOS.append(MU.hasLineOfSight(agent, entity, e))
                 if False in hasLOS:
                     entity_dir.append(nullVector)
+                    distances.append(0)
                 else:
                     vec = entity.state.p_pos - agent.state.p_pos
                     vec_hat = vec / np.linalg.norm(vec)
                     entity_dir.append(vec_hat)
+                    distances.append(np.linalg.norm(vec))
 
         friendly_dir = []
         other_dir = []
@@ -238,17 +241,21 @@ class Scenario(BaseScenario):
             if False in hasLOS:
                 if other.adversary:
                     friendly_dir.append(nullVector)
+                    distances.append(0)
                 else:
                     other_dir.append(nullVector)
+                    distances.append(0)
             else:
                 if other.adversary:
                     vec = other.state.p_pos - agent.state.p_pos
                     vec_hat = vec / np.linalg.norm(vec)
                     friendly_dir.append(vec_hat)
+                    distances.append(np.linalg.norm(vec))
                 else:
                     vec = other.state.p_pos - agent.state.p_pos
                     vec_hat = vec / np.linalg.norm(vec)
                     other_dir.append(vec_hat)
+                    distances.append(np.linalg.norm(vec))
 
         return np.concatenate(
             [agent.state.p_vel]

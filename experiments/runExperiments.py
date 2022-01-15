@@ -1,11 +1,14 @@
 from pickle import load
 import subprocess as sp
 import os
+import argparse
 
 cmdBase = "python train.py".split()
 cmdNumAdv = "--num-adversaries 3".split()
 cmdNumEpisodes = "--num-episodes 60000".split()
 cmdNumUnits = "--num-units 64".split()
+cmdNumUnitsAdv = "--num-units-adv 64".split()
+cmdNumUnitsGood = "--num-units-good 64".split()
 cmdScenario = "--scenario tag_s_base".split()
 cmdLoadDir = "--load-dir './policy-tag_s_base_60000/'".split()
 cmdSaveDir = "--save-dir './policy-tag_s_base-60000/".split()
@@ -40,30 +43,99 @@ def generateFullCommand(restore, benchmark):
     return list(map(lambda x: str(x), fullCmd))
 
 
-# train 10,000 then benchmark? till 12,000?
+def parse_args():
+    parser = argparse.ArgumentParser(
+        "Custom training script to call train.py multiple times and benchmark in between"
+    )
+    # Environment
+    parser.add_argument(
+        "--scenario", type=str, default="tag_s_base", help="name of the scenario script"
+    )
+    parser.add_argument("--start-iter", type=int, default=1, help="starting iter num")
+    parser.add_argument("--end-iter", type=int, default=12, help="ending iter num")
+    # Core training parameters
+    parser.add_argument(
+        "--num-units", type=int, default=64, help="number of units in the mlp"
+    )
+    parser.add_argument(
+        "--num-units-adv",
+        type=int,
+        default=64,
+        help="number of units in the mlp for adv agents",
+    )
+    parser.add_argument(
+        "--num-units-good",
+        type=int,
+        default=64,
+        help="number of units in the mlp for good agents",
+    )
+    # Checkpointing
+    parser.add_argument(
+        "--initial-exp-name",
+        type=str,
+        default="myExperiment",
+        help="name of the experiment",
+    )
+    parser.add_argument(
+        "--initial-dir",
+        type=str,
+        default="./policy/",
+        help="directory path",
+    )
+    parser.add_argument(
+        "--benchmark",
+        type=str,
+        default="yes",
+        help="whether to benchmark, yes/no/only",
+    )
+    parser.add_argument(
+        "--benchmark-interval",
+        type=int,
+        default=1,
+        help="benchmark interval",
+    )
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
+    arglist = parse_args()
+    print(arglist)
 
-    numIterations = 15
+    benchmark = arglist.benchmark
+
+    # numIterations = 6
+    # startingIteration = 4
+    # endingIteration = 6
+    startingIteration = arglist.start_iter
+    endingIteration = arglist.end_iter
 
     numEpisodes = 10000
-    numUnits = 64
-    scenario = "tag_s_comm"
+    numUnits = arglist.num_units
+    numUnitsAdv = arglist.num_units_adv
+    numUnitsGood = arglist.num_units_good
+    # scenario = "tag_s_los_base_wDistance"
+    scenario = arglist.scenario
 
-    initialDir = "./policy-tag_s_comm_LONG"
-    initialExpName = "tag_s_comm_LONG"
+    # initialDir = "./policy-tag_s_los_base_wDistance_LONG"
+    # initialExpName = "tag_s_los_base_wDistance_LONG"
+    initialDir = arglist.initial_dir
+    initialExpName = arglist.initial_exp_name
 
     cmdNumEpisodes[1] = numEpisodes
     cmdNumUnits[1] = numUnits
+    cmdNumUnitsAdv[1] = numUnitsAdv
+    cmdNumUnitsGood[1] = numUnitsGood
     cmdScenario[1] = scenario
+
+    benchmark_interval = arglist.benchmark_interval
+    benchmark_index = 0
 
     with open(os.path.join("logs", f"{initialExpName}-log.txt"), "a") as f:
         loadDir = ""
         saveDir = ""
         fullCommand = []
         fullCommandBenchmark = []
-        for i in range(1, numIterations + 1):
+        for i in range(startingIteration, endingIteration + 1):
             expName = initialExpName + f"_{i*numEpisodes}"
             cmdExpName[1] = expName
             if i == 1:
@@ -83,11 +155,21 @@ if __name__ == "__main__":
                     restore=False, benchmark=True
                 )
 
-            print(fullCommand)
-            print(fullCommandBenchmark)
+            if benchmark == "only":
+                pass
+            else:
+                print(fullCommand)
+                f.write(" ".join(fullCommand) + "\n")
+                sp.run(fullCommand, stdout=f, text=True)
 
-            f.write(" ".join(fullCommand) + "\n")
-            f.write(" ".join(fullCommandBenchmark) + "\n")
+            if benchmark == "no":
+                # redundant since checking for yes and only below
+                continue
 
-            sp.run(fullCommand, stdout=f, text=True)
-            sp.run(fullCommandBenchmark, stdout=f, text=True)
+            if (benchmark == "yes") or (benchmark == "only"):
+                benchmark_index += 1
+                if benchmark_index % benchmark_interval == 0:
+                    # benchmark every set interval (eg 2, )
+                    print(fullCommandBenchmark)
+                    f.write(" ".join(fullCommandBenchmark) + "\n")
+                    sp.run(fullCommandBenchmark, stdout=f, text=True)

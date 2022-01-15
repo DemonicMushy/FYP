@@ -24,6 +24,10 @@ class Scenario(BaseScenario):
             agent.accel = 3.0 if agent.adversary else 4.0
             # agent.accel = 20.0 if agent.adversary else 25.0
             agent.max_speed = 1.0 if agent.adversary else 1.3
+            # custom forced communication
+            agent.forced_comm_los = [
+                0 for i in (range(num_agents - 1 + (num_agents - 1) * (num_landmarks)))
+            ]
         # add landmarks
         world.landmarks = [Landmark() for i in range(num_landmarks)]
         for i, landmark in enumerate(world.landmarks):
@@ -221,6 +225,7 @@ class Scenario(BaseScenario):
                     vec_hat = vec / np.linalg.norm(vec)
                     entity_dir.append(vec_hat)
 
+        comm = []
         friendly_dir = []
         other_dir = []
         for other in world.agents:
@@ -249,6 +254,13 @@ class Scenario(BaseScenario):
                     vec = other.state.p_pos - agent.state.p_pos
                     vec_hat = vec / np.linalg.norm(vec)
                     other_dir.append(vec_hat)
+
+        for cAgent in world.agents:
+            if cAgent is agent:
+                continue
+            if not cAgent.adversary:
+                continue
+            comm.append(cAgent.forced_comm_los)
 
         return np.concatenate(
             [agent.state.p_vel]
