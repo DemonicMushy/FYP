@@ -125,6 +125,23 @@ def mlp_model(input, num_outputs, scope, reuse=False, num_units=64, rnn_cell=Non
         return out
 
 
+def custom_mlp_model(
+    input,
+    num_outputs,
+    scope,
+    reuse=False,
+    num_units=64,
+    rnn_cell=None,
+):
+    # This model takes as input an observation and returns values of all actions
+    with tf.compat.v1.variable_scope(scope, reuse=reuse):
+        out = input
+        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
+        return out
+
+
 def make_env(scenario_name, arglist, benchmark=False):
     from multiagent.environment import MultiAgentEnv
     import multiagent.scenarios as scenarios
@@ -158,7 +175,7 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
         trainers.append(
             trainer(
                 "agent_%d" % i,
-                model,
+                custom_mlp_model,
                 obs_shape_n,
                 env.action_space,
                 i,

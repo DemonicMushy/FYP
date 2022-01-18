@@ -82,5 +82,10 @@ python runExperiments.py --scenario tag_s_base --start-iter 1 --end-iter 12 --nu
 python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 12 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_base_Wdistance_32_64_LONG --initial-dir "./policy-tag_s_base_Wdistance_32_64_LONG"
 python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 12 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_comm_32_64_LONG --initial-dir "./policy-tag_s_comm_32_64_LONG"
 
-python runExperiments.py --scenario tag_s_base --start-iter 7 --end-iter 12 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_base_32_64_LONG --initial-dir "./policy-tag_s_base_32_64_LONG" --benchmark no &&
+python runExperiments.py --scenario tag_s_comm --start-iter 13 --end-iter 18 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_comm_32_64_LONG --initial-dir "./policy-tag_s_comm_32_64_LONG" --benchmark-interval 6 &&
+python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 7 --end-iter 18 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_base_Wdistance_32_64_LONG --initial-dir "./policy-tag_s_base_Wdistance_32_64_LONG" --benchmark-interval 12 &&
+
+python runExperiments.py --scenario tag_s_base --start-iter 1 --end-iter 6 --initial-exp-name tag_s_base__64_32__LONG --initial-dir "./policy-tag_s_base__64_32__LONG" --benchmark-interval 6 &&
+python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 6 --initial-exp-name tag_s_base_Wdistance__64_32__LONG --initial-dir "./policy-tag_s_base_Wdistance__64_32__LONG" --benchmark-interval 6 &&
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --initial-exp-name tag_s_comm__64_32__LONG --initial-dir "./policy-tag_s_comm__64_32__LONG" --benchmark-interval 6 &&
 shutdown now
