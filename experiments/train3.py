@@ -137,8 +137,8 @@ def custom_mlp_model(
     with tf.compat.v1.variable_scope(scope, reuse=reuse):
         out = input
         out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
-        out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
-        # out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
         return out
 
@@ -176,8 +176,8 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
         trainers.append(
             trainer(
                 "agent_%d" % i,
-                custom_mlp_model,
-                # model,
+                # custom_mlp_model,
+                model,
                 obs_shape_n,
                 env.action_space,
                 i,

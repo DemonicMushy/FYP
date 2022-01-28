@@ -138,7 +138,7 @@ def custom_mlp_model(
         out = input
         out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
-        # out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
         return out
 

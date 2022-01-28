@@ -75,17 +75,37 @@ python train.py --scenario tag_s_comm --num-adversaries 3 --num-episodes 30000 -
 
 python runExperiments.py --scenario tag_s_los_comm --start-iter 1 --end-iter 6 --num-units 64 --initial-exp-name tag_s_los_comm_LONG --initial-dir "./policy-tag_s_los_comm_LONG"
 
-python runExperiments.py --scenario tag_s_base --start-iter 1 --end-iter 12 --num-units 32 --initial-exp-name tag_s_base_32_LONG --initial-dir "./policy-tag_s_base_32_LONG"
-
 
 python runExperiments.py --scenario tag_s_base --start-iter 1 --end-iter 12 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_base_32_64_LONG --initial-dir "./policy-tag_s_base_32_64_LONG"
 python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 12 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_base_Wdistance_32_64_LONG --initial-dir "./policy-tag_s_base_Wdistance_32_64_LONG"
 python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 12 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_comm_32_64_LONG --initial-dir "./policy-tag_s_comm_32_64_LONG"
 
-python runExperiments.py --scenario tag_s_comm --start-iter 13 --end-iter 18 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_comm_32_64_LONG --initial-dir "./policy-tag_s_comm_32_64_LONG" --benchmark-interval 6 &&
-python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 7 --end-iter 18 --num-units-adv 32 --num-units-good 64 --initial-exp-name tag_s_base_Wdistance_32_64_LONG --initial-dir "./policy-tag_s_base_Wdistance_32_64_LONG" --benchmark-interval 12 &&
+python runExperiments.py --scenario tag_s_base --start-iter 1 --end-iter 6 --initial-exp-name tag_s_base__64_32__LONG --initial-dir "./policy-tag_s_base__64_32__LONG" --benchmark-interval 2
+python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 6 --initial-exp-name tag_s_base_Wdistance__64_32__LONG --initial-dir "./policy-tag_s_base_Wdistance__64_32__LONG" --benchmark-interval 2
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --initial-exp-name tag_s_comm__64_32__LONG --initial-dir "./policy-tag_s_comm__64_32__LONG" --benchmark-interval 2
 
-python runExperiments.py --scenario tag_s_base --start-iter 1 --end-iter 6 --initial-exp-name tag_s_base__64_32__LONG --initial-dir "./policy-tag_s_base__64_32__LONG" --benchmark-interval 6 &&
-python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 6 --initial-exp-name tag_s_base_Wdistance__64_32__LONG --initial-dir "./policy-tag_s_base_Wdistance__64_32__LONG" --benchmark-interval 6 &&
-python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --initial-exp-name tag_s_comm__64_32__LONG --initial-dir "./policy-tag_s_comm__64_32__LONG" --benchmark-interval 6 &&
+
+python runExperiments.py --scenario tag_s_base --start-iter 1 --end-iter 6 --num-units-adv 32 --initial-exp-name tag_s_base__32__LONG --initial-dir "./policy-tag_s_base__32__LONG" --benchmark-interval 2
+python runExperiments.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 6 --num-units-adv 32 --initial-exp-name tag_s_base_Wdistance__32__LONG --initial-dir "./policy-tag_s_base_Wdistance__32__LONG" --benchmark-interval 2
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --num-units-adv 32 --initial-exp-name tag_s_comm__32__LONG --initial-dir "./policy-tag_s_comm__32__LONG" --benchmark-interval 2
+
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --num-units-adv 16 --initial-exp-name tag_s_comm__16__LONG --initial-dir "./policy-tag_s_comm__16__LONG" --benchmark-interval 2
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --num-units-adv 128 --initial-exp-name tag_s_comm__128__LONG --initial-dir "./policy-tag_s_comm__128__LONG" --benchmark-interval 2
+
+
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --initial-exp-name tag_s_comm__64_64_64__LONG --initial-dir "./policy-tag_s_comm__64_64_64__LONG" --benchmark-interval 2
+python runExperiments2.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --initial-exp-name tag_s_comm__64_32_64__LONG --initial-dir "./policy-tag_s_comm__64_32_64__LONG" --benchmark-interval 2
+python runExperiments3.py --scenario tag_s_base_Wdistance --start-iter 16 --end-iter 18 --initial-exp-name tag_s_base_Wdistance_LONG --initial-dir "./policy-tag_s_base_Wdistance_LONG" --benchmark-interval 1
+
+python runExperiments3.py --scenario tag_s_comm --start-iter 16 --end-iter 18 --initial-exp-name tag_s_comm_LONG --initial-dir "./policy-tag_s_comm_LONG" --benchmark-interval 1
+python runExperiments3.py --scenario tag_s_base --start-iter 16 --end-iter 18 --initial-exp-name tag_s_base_LONG --initial-dir "./policy-tag_s_base_LONG" --benchmark-interval 1
+
+
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --initial-exp-name tag_s_comm__64_32__LONG2 --initial-dir "./policy-tag_s_comm__64_32__LONG2" --benchmark-interval 2
+python runExperiments.py --scenario tag_s_comm --start-iter 1 --end-iter 6 --initial-exp-name tag_s_comm__64_32__LONG3 --initial-dir "./policy-tag_s_comm__64_32__LONG3" --benchmark-interval 2
+
+
+python runExperiments.py --scenario tag_s_comm --start-iter 7 --end-iter 8 --initial-exp-name tag_s_comm__64_32__LONG --initial-dir "./policy-tag_s_comm__64_32__LONG" --benchmark-interval 2 &&
+python runExperiments.py --scenario tag_s_comm --start-iter 7 --end-iter 8 --initial-exp-name tag_s_comm__64_32__LONG2 --initial-dir "./policy-tag_s_comm__64_32__LONG2" --benchmark-interval 2 &&
+python runExperiments.py --scenario tag_s_comm --start-iter 7 --end-iter 8 --initial-exp-name tag_s_comm__64_32__LONG3 --initial-dir "./policy-tag_s_comm__64_32__LONG3" --benchmark-interval 2 &&
 shutdown now

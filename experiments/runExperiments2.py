@@ -3,7 +3,7 @@ import subprocess as sp
 import os
 import argparse
 
-cmdBase = "python train.py".split()
+cmdBase = "python train2.py".split()
 cmdNumAdv = "--num-adversaries 3".split()
 cmdNumEpisodes = "--num-episodes 60000".split()
 cmdNumUnits = "--num-units 64".split()
