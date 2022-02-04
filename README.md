@@ -29,8 +29,6 @@ python train3.py --num-adversaries 3 --num-episodes 10000 --num-units 64 --scena
 
 ---
 
-**Status:** Archive (code is provided as-is, no updates expected)
-
 # Multi-Agent Deep Deterministic Policy Gradient (MADDPG)
 
 This is the code for implementing the MADDPG algorithm presented in the paper:
