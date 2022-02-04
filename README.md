@@ -1,3 +1,34 @@
+This code is based off [OpenAI's MADDPG implementation](https://github.com/openai/maddpg/). A copy of its README can be found [below](#multi-agent-deep-deterministic-policy-gradient-maddpg).
+
+### Examples
+Be sure that your directory is at `experiments` before running the example commands
+```
+cd experiments
+```
+
+Example to train
+```
+python train3.py --num-adversaries 3 --num-episodes 10000 --num-units 64 --scenario tag_s_comm --save-dir ./policy-tag_s_comm_10000/
+```
+
+Example to render simulation of trained policy
+```
+python train3.py --num-adversaries 3 --num-episodes 10000 --num-units 64 --scenario tag_s_comm --load-dir ./policy-tag_s_comm_10000/ --display
+```
+
+Example to run benchmark
+```
+python train3.py --num-adversaries 3 --num-episodes 10000 --num-units 64 --scenario tag_s_comm --load-dir ./policy-tag_s_comm_10000/ --exp-name tag_s_comm_10000 --benchmark
+```
+
+### Difference between train, train2, train3
+
+`train3.py` is using the original 2 layer ReLU MLP.
+
+`train2.py` and `train.py` is where I manually change the number of layers and number of units of each layer (hence arguments --num-units and such is rendered useless for these two)
+
+---
+
 **Status:** Archive (code is provided as-is, no updates expected)
 
 # Multi-Agent Deep Deterministic Policy Gradient (MADDPG)
