@@ -112,6 +112,12 @@ def parse_args():
         default=False,
         help="whether to use fixed good agent policy",
     )
+    parser.add_argument(
+        "--benchmark-run", type=int, default=1, help="affects benchmark file naming"
+    )
+    parser.add_argument(
+        "--benchmark-filecount", type=int, default=20, help="number of files each run"
+    )
     return parser.parse_args()
 
 
@@ -137,8 +143,9 @@ def custom_mlp_model(
     with tf.compat.v1.variable_scope(scope, reuse=reuse):
         out = input
         out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=96, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
-        # out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
         return out
 
@@ -350,6 +357,8 @@ def train(arglist):
                             + str(benchmark_count - num)
                             + "_"
                             + str(benchmark_count)
+                            + "_"
+                            + str(arglist.benchmark_run)
                             + ".pkl"
                         )
                         with open(file_name, "wb") as fp:
@@ -359,7 +368,7 @@ def train(arglist):
                         print(
                             f"{num} iterations recorded and benchmarked, {num_files_written} files total"
                         )
-                    if num_files_written == 20:
+                    if num_files_written == arglist.benchmark_filecount:
                         break
                 continue
 

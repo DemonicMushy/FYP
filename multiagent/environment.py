@@ -192,53 +192,66 @@ class MultiAgentEnv(gym.Env):
         # make sure we used all elements of action
         assert len(action) == 0
         ##############################################
-        tracking = []
-        agent.forced_comm = []
-        agent.forced_comm_los = []
-        for agnt in self.agents:
-            if agnt is agent:
-                continue
-            for entity in self.world.landmarks:
-                hasLOS = []
-                if not entity.boundary:
-                    agent.forced_comm.append(np.linalg.norm(entity.state.p_pos - agnt.state.p_pos))
-                    # check if e blocks agnt LOS to entity, NOT agent
-                    for e in self.world.landmarks + self.world.agents:
-                        if e is agnt:
-                            continue
-                        if e is entity:
-                            continue
-                        hasLOS.append(MU.hasLineOfSight(agnt, entity, e))
-                    if False in hasLOS:
-                        agent.forced_comm_los.append(0)
-                    else:
-                        vec = entity.state.p_pos - agnt.state.p_pos
-                        agent.forced_comm_los.append(np.linalg.norm(vec))
+        if hasattr(agent, 'forced_comm') or hasattr(agent, 'forced_comm_los'):
+            tracking = []
+            if hasattr(agent, 'forced_comm'):
+                # reset to 0 items since appending below
+                agent.forced_comm = []
+            if hasattr(agent, 'forced_comm_los'):
+                # reset to 0 items since appending below
+                agent.forced_comm_los = []
+            for agnt in self.agents:
+                if agnt is agent:
+                    continue
+                for entity in self.world.landmarks:
+                    hasLOS = []
+                    if not entity.boundary:
+                        if hasattr(agent, 'forced_comm'):
+                            agent.forced_comm.append(np.linalg.norm(entity.state.p_pos - agnt.state.p_pos))
+                        if hasattr(agent, 'forced_comm_los'):
+                            # check if e blocks agnt LOS to entity, NOT agent
+                            for e in self.world.landmarks + self.world.agents:
+                                if e is agnt:
+                                    continue
+                                if e is entity:
+                                    continue
+                                hasLOS.append(MU.hasLineOfSight(agnt, entity, e))
+                                # WRONG? should check agent against both agnt and entity
+                                # hasLineOfSight(agent, agnt, e)
+                                # hasLineOfSight(agent, entity, e)
+                                # if both True for all e then append
+                            if False in hasLOS:
+                                agent.forced_comm_los.append(0)
+                            else:
+                                vec = entity.state.p_pos - agnt.state.p_pos
+                                agent.forced_comm_los.append(np.linalg.norm(vec))
 
-        for agnt in self.agents:
-            hasLOS = []
-            if agnt is agent:
-                continue
-            tracking.append(agnt)
-            for agnt2 in self.agents:
-                if agnt2 in tracking:
+            for agnt in self.agents:
+                hasLOS = []
+                if agnt is agent:
                     continue
-                if agnt2 is agent:
-                    continue
-                agent.forced_comm.append(np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos))
-                # check if e blocks agnt LOS to agnt2, NOT agent
-                for e in self.world.landmarks + self.world.agents:
-                    if e is agnt:
+                tracking.append(agnt)
+                for agnt2 in self.agents:
+                    if agnt2 in tracking:
                         continue
-                    if e is agnt2:
+                    if agnt2 is agent:
                         continue
-                    hasLOS.append(MU.hasLineOfSight(agnt, agnt2, e))
-                if False in hasLOS:
-                    agent.forced_comm_los.append(0)
-                else:
-                    # taking the len of vector so direction of vector does not matter
-                    vec = agnt2.state.p_pos - agnt.state.p_pos
-                    agent.forced_comm_los.append(np.linalg.norm(vec))
+                    if hasattr(agent, 'forced_comm'):
+                        agent.forced_comm.append(np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos))
+                    if hasattr(agent, 'forced_comm_los'):
+                        # check if e blocks agnt LOS to agnt2, NOT agent
+                        for e in self.world.landmarks + self.world.agents:
+                            if e is agnt:
+                                continue
+                            if e is agnt2:
+                                continue
+                            hasLOS.append(MU.hasLineOfSight(agnt, agnt2, e))
+                        if False in hasLOS:
+                            agent.forced_comm_los.append(0)
+                        else:
+                            # taking the len of vector so direction of vector does not matter
+                            vec = agnt2.state.p_pos - agnt.state.p_pos
+                            agent.forced_comm_los.append(np.linalg.norm(vec))
                 
 
     # reset rendering assets

@@ -15,6 +15,8 @@ cmdSaveDir = "--save-dir './policy-tag_s_base-60000/".split()
 cmdExpName = "--exp-name tag_s_base".split()
 cmdRestore = "--restore".split()
 cmdBenchmark = "--benchmark".split()
+cmdBenchmarkRun = "--benchmark-run 1".split()
+cmdBenchmarkFilecount = "--benchmark-filecount 20".split()
 
 allCmds = [
     cmdBase,
@@ -29,6 +31,8 @@ allCmds = [
     cmdExpName,
     cmdRestore,
     cmdBenchmark,
+    cmdBenchmarkRun,
+    cmdBenchmarkFilecount,
 ]
 
 
@@ -56,6 +60,9 @@ def parse_args():
     parser.add_argument("--start-iter", type=int, default=1, help="starting iter num")
     parser.add_argument("--end-iter", type=int, default=12, help="ending iter num")
     # Core training parameters
+    parser.add_argument(
+        "--num-episodes", type=int, default=60000, help="number of episodes"
+    )
     parser.add_argument(
         "--num-units", type=int, default=64, help="number of units in the mlp"
     )
@@ -96,6 +103,12 @@ def parse_args():
         default=1,
         help="benchmark interval",
     )
+    parser.add_argument(
+        "--benchmark-run", type=int, default=1, help="affects benchmark file naming"
+    )
+    parser.add_argument(
+        "--benchmark-filecount", type=int, default=20, help="number of files each run"
+    )
     return parser.parse_args()
 
 
@@ -111,7 +124,7 @@ if __name__ == "__main__":
     startingIteration = arglist.start_iter
     endingIteration = arglist.end_iter
 
-    numEpisodes = 10000
+    numEpisodes = arglist.num_episodes
     numUnits = arglist.num_units
     numUnitsAdv = arglist.num_units_adv
     numUnitsGood = arglist.num_units_good
@@ -123,11 +136,16 @@ if __name__ == "__main__":
     initialDir = arglist.initial_dir
     initialExpName = arglist.initial_exp_name
 
+    benchmarkRun = arglist.benchmark_run
+    benchmarkFilecount = arglist.benchmark_filecount
+
     cmdNumEpisodes[1] = numEpisodes
     cmdNumUnits[1] = numUnits
     cmdNumUnitsAdv[1] = numUnitsAdv
     cmdNumUnitsGood[1] = numUnitsGood
     cmdScenario[1] = scenario
+    cmdBenchmarkRun[1] = benchmarkRun
+    cmdBenchmarkFilecount[1] = benchmarkFilecount
 
     benchmark_interval = arglist.benchmark_interval
     benchmark_index = 0
