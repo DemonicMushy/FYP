@@ -3,25 +3,51 @@ import numpy as np
 import os
 import tensorflow as tf
 
+
 def sum(x, axis=None, keepdims=False):
-    return tf.reduce_sum(input_tensor=x, axis=None if axis is None else [axis], keepdims = keepdims)
+    return tf.reduce_sum(
+        input_tensor=x, axis=None if axis is None else [axis], keepdims=keepdims
+    )
+
+
 def mean(x, axis=None, keepdims=False):
-    return tf.reduce_mean(input_tensor=x, axis=None if axis is None else [axis], keepdims = keepdims)
+    return tf.reduce_mean(
+        input_tensor=x, axis=None if axis is None else [axis], keepdims=keepdims
+    )
+
+
 def var(x, axis=None, keepdims=False):
     meanx = mean(x, axis=axis, keepdims=keepdims)
     return mean(tf.square(x - meanx), axis=axis, keepdims=keepdims)
+
+
 def std(x, axis=None, keepdims=False):
     return tf.sqrt(var(x, axis=axis, keepdims=keepdims))
+
+
 def max(x, axis=None, keepdims=False):
-    return tf.reduce_max(input_tensor=x, axis=None if axis is None else [axis], keepdims = keepdims)
+    return tf.reduce_max(
+        input_tensor=x, axis=None if axis is None else [axis], keepdims=keepdims
+    )
+
+
 def min(x, axis=None, keepdims=False):
-    return tf.reduce_min(input_tensor=x, axis=None if axis is None else [axis], keepdims = keepdims)
+    return tf.reduce_min(
+        input_tensor=x, axis=None if axis is None else [axis], keepdims=keepdims
+    )
+
+
 def concatenate(arrs, axis=0):
     return tf.concat(axis=axis, values=arrs)
+
+
 def argmax(x, axis=None):
     return tf.argmax(input=x, axis=axis)
+
+
 def softmax(x, axis=None):
     return tf.nn.softmax(x, axis=axis)
+
 
 # ================================================================
 # Misc
@@ -31,6 +57,7 @@ def softmax(x, axis=None):
 def is_placeholder(x):
     return type(x) is tf.Tensor and len(x.op.inputs) == 0
 
+
 # ================================================================
 # Inputs
 # ================================================================
@@ -39,8 +66,8 @@ def is_placeholder(x):
 class TfInput(object):
     def __init__(self, name="(unnamed)"):
         """Generalized Tensorflow placeholder. The main differences are:
-            - possibly uses multiple placeholders internally and returns multiple values
-            - can apply light postprocessing to the value feed to placeholder.
+        - possibly uses multiple placeholders internally and returns multiple values
+        - can apply light postprocessing to the value feed to placeholder.
         """
         self.name = name
 
@@ -81,7 +108,9 @@ class BatchInput(PlacholderTfInput):
         name: str
             name of the underlying placeholder
         """
-        super().__init__(tf.compat.v1.placeholder(dtype, [None] + list(shape), name=name))
+        super().__init__(
+            tf.compat.v1.placeholder(dtype, [None] + list(shape), name=name)
+        )
 
 
 class Uint8Input(PlacholderTfInput):
@@ -99,7 +128,9 @@ class Uint8Input(PlacholderTfInput):
             name of the underlying placeholder
         """
 
-        super().__init__(tf.compat.v1.placeholder(tf.uint8, [None] + list(shape), name=name))
+        super().__init__(
+            tf.compat.v1.placeholder(tf.uint8, [None] + list(shape), name=name)
+        )
         self._shape = shape
         self._output = tf.cast(super().get(), tf.float32) / 255.0
 
@@ -116,6 +147,7 @@ def ensure_tf_input(thing):
     else:
         raise ValueError("Must be a placeholder or TfInput")
 
+
 # ================================================================
 # Mathematical utils
 # ================================================================
@@ -124,10 +156,9 @@ def ensure_tf_input(thing):
 def huber_loss(x, delta=1.0):
     """Reference: https://en.wikipedia.org/wiki/Huber_loss"""
     return tf.compat.v1.where(
-        tf.abs(x) < delta,
-        tf.square(x) * 0.5,
-        delta * (tf.abs(x) - 0.5 * delta)
+        tf.abs(x) < delta, tf.square(x) * 0.5, delta * (tf.abs(x) - 0.5 * delta)
     )
+
 
 # ================================================================
 # Optimizer utils
@@ -138,7 +169,7 @@ def minimize_and_clip(optimizer, objective, var_list, clip_val=10):
     """Minimized `objective` using `optimizer` w.r.t. variables in
     `var_list` while ensure the norm of the gradients for each
     variable is clipped to `clip_val`
-    """    
+    """
     if clip_val is None:
         return optimizer.minimize(objective, var_list=var_list)
     else:
@@ -153,6 +184,7 @@ def minimize_and_clip(optimizer, objective, var_list, clip_val=10):
 # Global session
 # ================================================================
 
+
 def get_session():
     """Returns recently made Tensorflow session"""
     return tf.compat.v1.get_default_session()
@@ -161,8 +193,19 @@ def get_session():
 def make_session(num_cpu):
     """Returns a session that will use <num_cpu> CPU's only"""
     tf_config = tf.compat.v1.ConfigProto(
-        inter_op_parallelism_threads=num_cpu,
-        intra_op_parallelism_threads=num_cpu)
+        inter_op_parallelism_threads=num_cpu, intra_op_parallelism_threads=num_cpu
+    )
+    gpus = tf.config.list_physical_devices("GPU")
+    if gpus:
+        try:
+            # Currently, memory growth needs to be the same across GPUs
+            for gpu in gpus:
+                tf.config.experimental.set_memory_growth(gpu, True)
+                logical_gpus = tf.config.list_logical_devices("GPU")
+                print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+        except RuntimeError as e:
+            # Memory growth must be set before GPUs have been initialized
+            print(e)
     return tf.compat.v1.Session(config=tf_config)
 
 
@@ -204,8 +247,10 @@ def scope_vars(scope, trainable_only=False):
         list of variables in `scope`.
     """
     return tf.compat.v1.get_collection(
-        tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES if trainable_only else tf.compat.v1.GraphKeys.GLOBAL_VARIABLES,
-        scope=scope if isinstance(scope, str) else scope.name
+        tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES
+        if trainable_only
+        else tf.compat.v1.GraphKeys.GLOBAL_VARIABLES,
+        scope=scope if isinstance(scope, str) else scope.name,
     )
 
 
@@ -217,6 +262,7 @@ def scope_name():
 def absolute_scope_name(relative_scope_name):
     """Appends parent scope name to `relative_scope_name`"""
     return scope_name() + "/" + relative_scope_name
+
 
 # ================================================================
 # Saving variables
@@ -238,6 +284,7 @@ def save_state(fname, saver=None):
         saver = tf.compat.v1.train.Saver()
     saver.save(get_session(), fname)
     return saver
+
 
 # ================================================================
 # Theano-like Function
@@ -279,7 +326,9 @@ def function(inputs, outputs, updates=None, givens=None):
         return _Function(inputs, outputs, updates, givens=givens)
     elif isinstance(outputs, (dict, collections.OrderedDict)):
         f = _Function(inputs, outputs.values(), updates, givens=givens)
-        return lambda *args, **kwargs: type(outputs)(zip(outputs.keys(), f(*args, **kwargs)))
+        return lambda *args, **kwargs: type(outputs)(
+            zip(outputs.keys(), f(*args, **kwargs))
+        )
     else:
         f = _Function(inputs, [outputs], updates, givens=givens)
         return lambda *args, **kwargs: f(*args, **kwargs)[0]
@@ -289,7 +338,9 @@ class _Function(object):
     def __init__(self, inputs, outputs, updates, givens, check_nan=False):
         for inpt in inputs:
             if not issubclass(type(inpt), TfInput):
-                assert len(inpt.op.inputs) == 0, "inputs should all be placeholders of rl_algs.common.TfInput"
+                assert (
+                    len(inpt.op.inputs) == 0
+                ), "inputs should all be placeholders of rl_algs.common.TfInput"
         self.inputs = inputs
         updates = updates or []
         self.update_group = tf.group(*updates)
@@ -311,17 +362,22 @@ class _Function(object):
             self._feed_input(feed_dict, inpt, value)
         # Update the kwargs
         kwargs_passed_inpt_names = set()
-        for inpt in self.inputs[len(args):]:
-            inpt_name = inpt.name.split(':')[0]
-            inpt_name = inpt_name.split('/')[-1]
-            assert inpt_name not in kwargs_passed_inpt_names, \
-                "this function has two arguments with the same name \"{}\", so kwargs cannot be used.".format(inpt_name)
+        for inpt in self.inputs[len(args) :]:
+            inpt_name = inpt.name.split(":")[0]
+            inpt_name = inpt_name.split("/")[-1]
+            assert (
+                inpt_name not in kwargs_passed_inpt_names
+            ), 'this function has two arguments with the same name "{}", so kwargs cannot be used.'.format(
+                inpt_name
+            )
             if inpt_name in kwargs:
                 kwargs_passed_inpt_names.add(inpt_name)
                 self._feed_input(feed_dict, inpt, kwargs.pop(inpt_name))
             else:
                 assert inpt in self.givens, "Missing argument " + inpt_name
-        assert len(kwargs) == 0, "Function got extra arguments " + str(list(kwargs.keys()))
+        assert len(kwargs) == 0, "Function got extra arguments " + str(
+            list(kwargs.keys())
+        )
         # Update feed dict with givens.
         for inpt in self.givens:
             feed_dict[inpt] = feed_dict.get(inpt, self.givens[inpt])
