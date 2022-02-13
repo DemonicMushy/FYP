@@ -1,7 +1,7 @@
-from asyncio import subprocess
-from concurrent.futures import process
+from multiprocessing import Process
 import subprocess as sp
 import argparse
+from runExperiments3 import runExp
 
 cmdBase = "python runExperiments.py".split()
 cmdScenario = "--scenario tag_s_base".split()
@@ -19,7 +19,7 @@ cmdBenchmarkRun = "--benchmark-run 1".split()
 cmdBenchmarkFilecount = "--benchmark-filecount 20".split()
 
 allCmds = [
-    cmdBase,
+    # cmdBase,
     cmdStartIter,
     cmdEndIter,
     cmdNumEpisodes,
@@ -111,6 +111,68 @@ def generateFullCommand():
         fullCmd += cmd
     return list(map(lambda x: str(x), fullCmd))
 
+def parse_args_other(cmd = None):
+    parser = argparse.ArgumentParser(
+        "Custom training script to call train.py multiple times and benchmark in between"
+    )
+    # Environment
+    parser.add_argument(
+        "--scenario", type=str, default="tag_s_base", help="name of the scenario script"
+    )
+    parser.add_argument("--start-iter", type=int, default=1, help="starting iter num")
+    parser.add_argument("--end-iter", type=int, default=12, help="ending iter num")
+    # Core training parameters
+    parser.add_argument(
+        "--num-episodes", type=int, default=60000, help="number of episodes"
+    )
+    parser.add_argument(
+        "--num-units", type=int, default=64, help="number of units in the mlp"
+    )
+    parser.add_argument(
+        "--num-units-adv",
+        type=int,
+        default=64,
+        help="number of units in the mlp for adv agents",
+    )
+    parser.add_argument(
+        "--num-units-good",
+        type=int,
+        default=64,
+        help="number of units in the mlp for good agents",
+    )
+    # Checkpointing
+    parser.add_argument(
+        "--initial-exp-name",
+        type=str,
+        default="myExperiment",
+        help="name of the experiment",
+    )
+    parser.add_argument(
+        "--initial-dir",
+        type=str,
+        default="./policy/",
+        help="directory path",
+    )
+    parser.add_argument(
+        "--benchmark",
+        type=str,
+        default="yes",
+        help="whether to benchmark, yes/no/only",
+    )
+    parser.add_argument(
+        "--benchmark-interval",
+        type=int,
+        default=1,
+        help="benchmark interval",
+    )
+    parser.add_argument(
+        "--benchmark-run", type=int, default=1, help="affects benchmark file naming"
+    )
+    parser.add_argument(
+        "--benchmark-filecount", type=int, default=20, help="number of files each run"
+    )
+    return parser.parse_args(cmd)
+
 
 if __name__ == "__main__":
     arglist = parse_args()
@@ -138,8 +200,15 @@ if __name__ == "__main__":
         experimentName = initialExpName + "_" + str(i)
         cmdInitialDir[1] = directory
         cmdInitialExpName[1] = experimentName
-        p = sp.Popen(generateFullCommand())
+        # print(" ".join(generateFullCommand()))
+        arglist_other = parse_args_other(generateFullCommand())
+        # print(arglist_other)
+        p = Process(target=runExp, args=(arglist_other,))
+        p.start()
         processes.append(p)
+    #     p = sp.Popen(generateFullCommand())
+    #     processes.append(p)
 
     for p in processes:
-        p.wait()
+        # p.wait()
+        p.join()

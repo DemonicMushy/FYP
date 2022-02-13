@@ -329,7 +329,7 @@ def train(arglist):
                     captures = 0
                     captures_timesteps = []
                     benchmark_count += 1
-                    num = 1000  # save every num episodes
+                    num = 10000  # save every num episodes
                     if benchmark_count % num == 0:
                         file_name = (
                             arglist.benchmark_dir

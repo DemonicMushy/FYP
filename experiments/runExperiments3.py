@@ -112,15 +112,9 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
-    arglist = parse_args()
-    print(arglist)
-
+def runExp(arglist):
     benchmark = arglist.benchmark
 
-    # numIterations = 6
-    # startingIteration = 4
-    # endingIteration = 6
     startingIteration = arglist.start_iter
     endingIteration = arglist.end_iter
 
@@ -128,11 +122,8 @@ if __name__ == "__main__":
     numUnits = arglist.num_units
     numUnitsAdv = arglist.num_units_adv
     numUnitsGood = arglist.num_units_good
-    # scenario = "tag_s_los_base_wDistance"
     scenario = arglist.scenario
 
-    # initialDir = "./policy-tag_s_los_base_wDistance_LONG"
-    # initialExpName = "tag_s_los_base_wDistance_LONG"
     initialDir = arglist.initial_dir
     initialExpName = arglist.initial_exp_name
 
@@ -193,3 +184,7 @@ if __name__ == "__main__":
                     print(fullCommandBenchmark)
                     f.write(" ".join(fullCommandBenchmark) + "\n")
                     sp.run(fullCommandBenchmark, stdout=f, text=True)
+
+if __name__ == "__main__":
+    arglist = parse_args()
+    runExp(arglist)
