@@ -2,6 +2,11 @@ experiments/policy*
 experiments/benchmark_files*
 experiments/learning_curves*
 experiments/logs*
+experiments/policies_archive/
+experiments/benchmark.csv
+
+
+*.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
