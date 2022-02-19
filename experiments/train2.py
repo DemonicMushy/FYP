@@ -7,6 +7,7 @@ import pickle
 import sys, os
 
 sys.path.append("/home/damien/Documents/maddpg/")
+sys.path.append("/home/FYP/dcheng009/FYP/")
 
 import maddpg.common.tf_util as U
 from maddpg.trainer.maddpg import MADDPGAgentTrainer
