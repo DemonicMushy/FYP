@@ -112,10 +112,7 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
-    arglist = parse_args()
-    print(arglist)
-
+def runExp(arglist):
     benchmark = arglist.benchmark
 
     # numIterations = 6
@@ -193,3 +190,7 @@ if __name__ == "__main__":
                     print(fullCommandBenchmark)
                     f.write(" ".join(fullCommandBenchmark) + "\n")
                     sp.run(fullCommandBenchmark, stdout=f, text=True)
+
+if __name__ == "__main__":
+    arglist = parse_args()
+    runExp(arglist)

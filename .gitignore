@@ -5,7 +5,7 @@ experiments/logs*
 experiments/policies_archive/
 experiments/benchmark.csv
 
-
+.vscode
 *.DS_Store
 
 # Byte-compiled / optimized / DLL files

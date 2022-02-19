@@ -1,7 +1,5 @@
 from multiprocessing import Process
-import subprocess as sp
 import argparse
-from runExperiments3 import runExp
 
 cmdBase = "python runExperiments.py".split()
 cmdScenario = "--scenario tag_s_base".split()
@@ -194,6 +192,16 @@ if __name__ == "__main__":
     cmdBenchmarkRun[1] = arglist.benchmark_run
     cmdBenchmarkFilecount[1] = arglist.benchmark_filecount
 
+    if (arglist.file == "runExperiments.py"):
+        from runExperiments import runExp
+    elif (arglist.file == "runExperiments2.py"):
+        from runExperiments2 import runExp
+    elif (arglist.file == "runExperiments3.py"):
+        from runExperiments3 import runExp
+    else:
+        raise Exception("Invalid file argument")
+
+
     processes = []
     for i in range(arglist.file_runs):
         directory = initialDir + "_" + str(i)
@@ -206,8 +214,6 @@ if __name__ == "__main__":
         p = Process(target=runExp, args=(arglist_other,))
         p.start()
         processes.append(p)
-    #     p = sp.Popen(generateFullCommand())
-    #     processes.append(p)
 
     for p in processes:
         # p.wait()

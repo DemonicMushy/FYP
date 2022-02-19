@@ -124,12 +124,33 @@ python runExperiments2.py --scenario tag_s_comm --start-iter 1 --end-iter 10 --i
 shutdown now
 
 
-python runExperiments3.py --scenario tag_s_base --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name tag_s_base_SHORT --initial-dir "./policy-tag_s_base_SHORT" x
+python runExperiments3.py --scenario tag_s_base --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name tag_s_base_SHORT --initial-dir "./policy-tag_s_base_SHORT"
+python runExperiments3.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name tag_s_base_Wdistance_SHORT --initial-dir "./policy-tag_s_base_Wdistance_SHORT"
 
-python runExperiments3.py --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name tag_s_base_Wdistance_SHORT --initial-dir "./policy-tag_s_base_Wdistance_SHORT" x
+python runExperiments3.py --scenario tag_s_base_Wdistance --start-iter 8 --end-iter 20 --num-episodes 2000 --initial-exp-name tag_s_base_Wdistance_SHORT --initial-dir "./policy-tag_s_base_Wdistance_SHORT" &&
+shutdown now
 
 128 - 64 - 32 - 5
 64 - 32 - 5
 64 - 96 - 64 - 32 - 5
 
 literature on how to design network around useful and unuseful information, (autoencoders)
+
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 10 --num-episodes 2000 --initial-exp-name comm --initial-dir "./policy-comm" --benchmark-filecount 10
+
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name comm --initial-dir "./policy-comm" --benchmark-filecount 10
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name comm1 --initial-dir "./policy-comm1" --benchmark-filecount 10
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name comm --initial-dir "./policy-comm2" --benchmark-filecount 10
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name comm1 --initial-dir "./policy-comm3" --benchmark-filecount 10
+// messed up the naming of exp-name for 3rd and 4th
+
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 5 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 6 --end-iter 20 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1
+
+
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm --initial-dir "./policy-comm" --benchmark-filecount 1 &&
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm1 --initial-dir "./policy-comm1" --benchmark-filecount 1 &&
+
+
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm2 --initial-dir "./policy-comm2" --benchmark-filecount 1 &&
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm3 --initial-dir "./policy-comm3" --benchmark-filecount 1
