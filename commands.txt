@@ -144,13 +144,19 @@ python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag
 python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name comm1 --initial-dir "./policy-comm3" --benchmark-filecount 10
 // messed up the naming of exp-name for 3rd and 4th
 
-python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 5 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1
-python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 6 --end-iter 20 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 20 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1
 
 
-python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm --initial-dir "./policy-comm" --benchmark-filecount 1 &&
-python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm1 --initial-dir "./policy-comm1" --benchmark-filecount 1 &&
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm --initial-dir "./policy-comm" --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm1 --initial-dir "./policy-comm1" --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm2 --initial-dir "./policy-comm2" --benchmark-filecount 1
 
 
-python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm2 --initial-dir "./policy-comm2" --benchmark-filecount 1 &&
-python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm3 --initial-dir "./policy-comm3" --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm3 --initial-dir "./policy-comm3" --benchmark-filecount 1 
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1 
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name distSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1 
+// i messed up the policy dir for this too
+
+
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_base --start-iter 1 --end-iter 5 --num-episodes 2000 --initial-exp-name base_3 --initial-dir "./policy-tag_s_base_3" --benchmark-filecount 1
+

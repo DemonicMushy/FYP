@@ -143,10 +143,10 @@ def custom_mlp_model(
     # This model takes as input an observation and returns values of all actions
     with tf.compat.v1.variable_scope(scope, reuse=reuse):
         out = input
-        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
-        out = slim.fully_connected(out, num_outputs=96, activation_fn=tf.nn.relu)
-        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=128, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=48, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
         return out
 
@@ -349,7 +349,7 @@ def train(arglist):
                     captures = 0
                     captures_timesteps = []
                     benchmark_count += 1
-                    num = 1000  # save every num episodes
+                    num = 10000  # save every num episodes
                     if benchmark_count % num == 0:
                         file_name = (
                             arglist.benchmark_dir
