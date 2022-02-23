@@ -36,6 +36,9 @@ class MultiAgentEnv(gym.Env):
         self.shared_reward = world.collaborative if hasattr(world, 'collaborative') else False
         self.time = 0
 
+        # current obs_n for other methods to access
+        self.current_obs_n = []
+
         # configure spaces
         self.action_space = []
         self.observation_space = []
@@ -101,6 +104,9 @@ class MultiAgentEnv(gym.Env):
         reward = np.sum(reward_n)
         if self.shared_reward:
             reward_n = [reward] * self.n
+
+        # so that _set_action can access obs_n
+        self.current_obs_n = obs_n
 
         return obs_n, reward_n, done_n, info_n
 
@@ -192,6 +198,12 @@ class MultiAgentEnv(gym.Env):
         # make sure we used all elements of action
         assert len(action) == 0
         ##############################################
+        # hardcoded lying strat 1 for adversaries
+        # these are the indexes of the obs space to get its own dist to target
+        # communicated by other agents
+        idx_to_check = {'agent 0': [21,30], 'agent 1':[21,31], 'agent 2':[22,31]}
+
+
         if hasattr(agent, 'forced_comm') or hasattr(agent, 'forced_comm_los'):
             tracking = []
             if hasattr(agent, 'forced_comm'):
@@ -237,7 +249,20 @@ class MultiAgentEnv(gym.Env):
                     if agnt2 is agent:
                         continue
                     if hasattr(agent, 'forced_comm'):
-                        agent.forced_comm.append(np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos))
+                        # lying 1
+                        # iterate over adversary agents
+                        self_dist_to_target = None
+                        for i, a in enumerate(self.agents):
+                            if not a.adversary:
+                                continue
+                            assert i in [0,1,2] # hardcoded lying only works for 3 adv agents
+                            if agent.name == a.name:
+                                targetObsSpace = self.current_obs_n[i]
+                                self_dist_to_target = np.average([targetObsSpace[i] for i in idx_to_check[agent.name]])
+                        dist = np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos)
+                        if self_dist_to_target < dist:
+                            dist = 0.5 * dist
+                        agent.forced_comm.append(dist)
                     if hasattr(agent, 'forced_comm_los'):
                         # check if e blocks agnt LOS to agnt2, NOT agent
                         for e in self.world.landmarks + self.world.agents:
