@@ -249,19 +249,21 @@ class MultiAgentEnv(gym.Env):
                     if agnt2 is agent:
                         continue
                     if hasattr(agent, 'forced_comm'):
-                        # lying 1
-                        # iterate over adversary agents
-                        self_dist_to_target = None
-                        for i, a in enumerate(self.agents):
-                            if not a.adversary:
-                                continue
-                            assert i in [0,1,2] # hardcoded lying only works for 3 adv agents
-                            if agent.name == a.name:
-                                targetObsSpace = self.current_obs_n[i]
-                                self_dist_to_target = np.average([targetObsSpace[i] for i in idx_to_check[agent.name]])
                         dist = np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos)
-                        if self_dist_to_target < dist:
-                            dist = 0.5 * dist
+                        if hasattr(agent, 'lying') and agent.lying:
+                            # lying 1
+                            # iterate over adversary agents
+                            self_dist_to_target = None
+                            for i, a in enumerate(self.agents):
+                                if not a.adversary:
+                                    continue
+                                assert i in [0,1,2] # hardcoded lying only works for 3 adv agents
+                                if agent.name == a.name:
+                                    targetObsSpace = self.current_obs_n[i]
+                                    self_dist_to_target = np.average([targetObsSpace[i] for i in idx_to_check[agent.name]])
+                            if self_dist_to_target < dist:
+                                dist = 0.5 * dist
+
                         agent.forced_comm.append(dist)
                     if hasattr(agent, 'forced_comm_los'):
                         # check if e blocks agnt LOS to agnt2, NOT agent
