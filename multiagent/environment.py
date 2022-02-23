@@ -120,6 +120,7 @@ class MultiAgentEnv(gym.Env):
         self.agents = self.world.policy_agents
         for agent in self.agents:
             obs_n.append(self._get_obs(agent))
+        self.current_obs_n = obs_n
         return obs_n
 
     # get info used for benchmarking
