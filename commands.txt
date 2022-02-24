@@ -158,5 +158,16 @@ python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag
 // i messed up the policy dir for this too
 
 
-python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_base --start-iter 1 --end-iter 5 --num-episodes 2000 --initial-exp-name base_3 --initial-dir "./policy-tag_s_base_3" --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_base --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name base_3 --initial-dir "./policy-tag_s_base_3" --benchmark-filecount 1
 
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_0 --initial-dir "./policy-lying1_128_64_32_0" --benchmark no
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 30 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_0 --initial-dir "./policy-lying1_128_64_32_0" --benchmark only --benchmark-filecount 1
+
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_1 --initial-dir "./policy-lying1_128_64_32_1" --benchmark no &&
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 30 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_1 --initial-dir "./policy-lying1_128_64_32_1" --benchmark only --benchmark-filecount 1
+
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_2 --initial-dir "./policy-lying1_128_64_32_2" --benchmark no &&
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 30 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_2 --initial-dir "./policy-lying1_128_64_32_2" --benchmark only --benchmark-filecount 1
+
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_3 --initial-dir "./policy-lying1_128_64_32_3" --benchmark no &&
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 30 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_3 --initial-dir "./policy-lying1_128_64_32_3" --benchmark only --benchmark-filecount 1
