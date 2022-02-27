@@ -154,8 +154,7 @@ python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag
 
 python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name comm3 --initial-dir "./policy-comm3" --benchmark-filecount 1 
 python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 21 --end-iter 30 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1 
-python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name distSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1 
-// i messed up the policy dir for this too
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_base_Wdistance --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name distSpecial_128_64_32 --initial-dir "./policy-distSpecial_128_64_32" --benchmark-filecount 1 
 
 
 python runMultipleExps.py --file runExperiments3.py --file-runs 5 --scenario tag_s_base --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name base_3 --initial-dir "./policy-tag_s_base_3" --benchmark-filecount 1
@@ -171,3 +170,7 @@ python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag
 
 python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_3 --initial-dir "./policy-lying1_128_64_32_3" --benchmark no &&
 python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1 --start-iter 30 --end-iter 30 --num-episodes 2000 --initial-exp-name lying1_128_64_32_3 --initial-dir "./policy-lying1_128_64_32_3" --benchmark only --benchmark-filecount 1
+
+// to fix the missing policy files from previous mistake
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark no 
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 31 --end-iter 40 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1 
