@@ -176,3 +176,5 @@ python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag
 
 // the week discussed about variance reduction
 python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_comm --start-iter 31 --end-iter 50 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32 --initial-dir "./policy-commSpecial_128_64_32" --benchmark-filecount 1 
+python runMultipleExps.py --file runExperiments2.py --file-runs 4 --scenario tag_s_comm --start-iter 41 --end-iter 50 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32_1 --initial-dir "./policy-commSpecial_128_64_32_1" --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments2.py --file-runs 4 --scenario tag_s_comm --start-iter 41 --end-iter 50 --num-episodes 2000 --initial-exp-name commSpecial_128_64_32_2 --initial-dir "./policy-commSpecial_128_64_32_2" --benchmark-filecount 1
