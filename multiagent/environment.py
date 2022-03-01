@@ -251,7 +251,7 @@ class MultiAgentEnv(gym.Env):
                         continue
                     if hasattr(agent, 'forced_comm'):
                         dist = np.linalg.norm(agnt.state.p_pos - agnt2.state.p_pos)
-                        if hasattr(agent, 'lying') and agent.lying:
+                        if hasattr(agent, 'lying') and agent.lying == 1:
                             # lying 1
                             # iterate over adversary agents
                             self_dist_to_target = None
@@ -262,7 +262,7 @@ class MultiAgentEnv(gym.Env):
                                 if agent.name == a.name:
                                     targetObsSpace = self.current_obs_n[i]
                                     self_dist_to_target = np.average([targetObsSpace[i] for i in idx_to_check[agent.name]])
-                            if self_dist_to_target < dist:
+                            if self_dist_to_target > dist:
                                 dist = 0.5 * dist
 
                         agent.forced_comm.append(dist)
