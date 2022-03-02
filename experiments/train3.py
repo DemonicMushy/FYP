@@ -14,7 +14,7 @@ from maddpg.trainer.maddpg import MADDPGAgentTrainer
 import tf_slim as slim
 
 
-def parse_args():
+def parse_args(cmd=None):
     parser = argparse.ArgumentParser(
         "Reinforcement Learning experiments for multiagent environments"
     )
@@ -117,9 +117,9 @@ def parse_args():
         "--benchmark-run", type=int, default=1, help="affects benchmark file naming"
     )
     parser.add_argument(
-        "--benchmark-filecount", type=int, default=20, help="number of files each run"
+        "--benchmark-filecount", type=int, default=1, help="number of files each run"
     )
-    return parser.parse_args()
+    return parser.parse_args(cmd)
 
 
 def mlp_model(input, num_outputs, scope, reuse=False, num_units=64, rnn_cell=None):

@@ -3,6 +3,7 @@ import argparse
 from multiprocessing import Process
 from datetime import datetime
 from train3 import train
+from train3 import parse_args as parse_args_other
 
 cmdBase = "python train3.py".split()
 cmdNumAdv = "--num-adversaries 3".split()
@@ -17,7 +18,7 @@ cmdExpName = "--exp-name tag_s_base".split()
 cmdRestore = "--restore".split()
 cmdBenchmark = "--benchmark".split()
 cmdBenchmarkRun = "--benchmark-run 1".split()
-cmdBenchmarkFilecount = "--benchmark-filecount 20".split()
+cmdBenchmarkFilecount = "--benchmark-filecount 1".split()
 
 allCmds = [
     # cmdBase,
@@ -50,7 +51,7 @@ def generateFullCommand(restore, benchmark):
     return list(map(lambda x: str(x), fullCmd))
 
 
-def parse_args():
+def parse_args(cmd=None):
     parser = argparse.ArgumentParser(
         "Custom training script to call train.py multiple times and benchmark in between"
     )
@@ -108,115 +109,7 @@ def parse_args():
         "--benchmark-run", type=int, default=1, help="affects benchmark file naming"
     )
     parser.add_argument(
-        "--benchmark-filecount", type=int, default=20, help="number of files each run"
-    )
-    return parser.parse_args()
-
-
-def parse_args_other(cmd):
-    parser = argparse.ArgumentParser(
-        "Reinforcement Learning experiments for multiagent environments"
-    )
-    # Environment
-    parser.add_argument(
-        "--scenario", type=str, default="simple", help="name of the scenario script"
-    )
-    parser.add_argument(
-        "--max-episode-len", type=int, default=25, help="maximum episode length"
-    )
-    parser.add_argument(
-        "--num-episodes", type=int, default=60000, help="number of episodes"
-    )
-    parser.add_argument(
-        "--num-adversaries", type=int, default=0, help="number of adversaries"
-    )
-    parser.add_argument(
-        "--good-policy", type=str, default="maddpg", help="policy for good agents"
-    )
-    parser.add_argument(
-        "--adv-policy", type=str, default="maddpg", help="policy of adversaries"
-    )
-    # Core training parameters
-    parser.add_argument(
-        "--lr", type=float, default=1e-2, help="learning rate for Adam optimizer"
-    )
-    parser.add_argument("--gamma", type=float, default=0.95, help="discount factor")
-    parser.add_argument(
-        "--batch-size",
-        type=int,
-        default=1024,
-        help="number of episodes to optimize at the same time",
-    )
-    parser.add_argument(
-        "--num-units", type=int, default=64, help="number of units in the mlp"
-    )
-    parser.add_argument(
-        "--num-units-adv",
-        type=int,
-        default=64,
-        help="number of units in the mlp for adv agents",
-    )
-    parser.add_argument(
-        "--num-units-good",
-        type=int,
-        default=64,
-        help="number of units in the mlp for good agents",
-    )
-    # Checkpointing
-    parser.add_argument(
-        "--exp-name", type=str, default="myExperiment", help="name of the experiment"
-    )
-    parser.add_argument(
-        "--save-dir",
-        type=str,
-        default="./policy/",
-        help="directory in which training state and model should be saved",
-    )
-    parser.add_argument(
-        "--save-rate",
-        type=int,
-        default=1000,
-        help="save model once every time this many episodes are completed",
-    )
-    parser.add_argument(
-        "--load-dir",
-        type=str,
-        default="",
-        help="directory in which training state and model are loaded",
-    )
-    # Evaluation
-    parser.add_argument("--restore", action="store_true", default=False)
-    parser.add_argument("--display", action="store_true", default=False)
-    parser.add_argument("--benchmark", action="store_true", default=False)
-    parser.add_argument(
-        "--benchmark-iters",
-        type=int,
-        default=100000,
-        help="number of iterations run for benchmarking",
-    )
-    parser.add_argument(
-        "--benchmark-dir",
-        type=str,
-        default="./benchmark_files/",
-        help="directory where benchmark data is saved",
-    )
-    parser.add_argument(
-        "--plots-dir",
-        type=str,
-        default="./learning_curves/",
-        help="directory where plot data is saved",
-    )
-    parser.add_argument(
-        "--use-same-good-agents",
-        action="store_true",
-        default=False,
-        help="whether to use fixed good agent policy",
-    )
-    parser.add_argument(
-        "--benchmark-run", type=int, default=1, help="affects benchmark file naming"
-    )
-    parser.add_argument(
-        "--benchmark-filecount", type=int, default=20, help="number of files each run"
+        "--benchmark-filecount", type=int, default=1, help="number of files each run"
     )
     return parser.parse_args(cmd)
 
