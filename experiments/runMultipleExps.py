@@ -1,4 +1,5 @@
 from multiprocessing import Process
+import threading
 import argparse
 
 cmdBase = "python runExperiments.py".split()
@@ -142,7 +143,8 @@ if __name__ == "__main__":
     else:
         raise Exception("Invalid file argument")
 
-    processes = []
+    # processes = []
+    threads = []
     for i in range(arglist.file_runs):
         directory = initialDir + "_" + str(i)
         experimentName = initialExpName + "_" + str(i)
@@ -151,10 +153,18 @@ if __name__ == "__main__":
         # print(" ".join(generateFullCommand()))
         arglist_other = parse_args_other(generateFullCommand())
         # print(arglist_other)
-        p = Process(target=runExp, args=(arglist_other,))
-        p.start()
-        processes.append(p)
 
-    for p in processes:
-        # p.wait()
-        p.join()
+        # p = Process(target=runExp, args=(arglist_other,))
+        # p.start()
+        # processes.append(p)
+
+        t = threading.Thread(target=runExp, args=(arglist_other,))
+        t.start()
+        threads.append(t)
+
+    # for p in processes:
+    #     # p.wait()
+    #     p.join()
+
+    for t in threads:
+        t.join()
