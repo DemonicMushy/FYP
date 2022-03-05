@@ -134,12 +134,12 @@ def runExp(arglist):
     benchmark_interval = arglist.benchmark_interval
     benchmark_index = 0
 
-    with open(os.path.join("logs", f"{initialExpName}-log.txt"), "a") as f:
-        loadDir = ""
-        saveDir = ""
-        fullCommand = []
-        fullCommandBenchmark = []
-        for i in range(startingIteration, endingIteration + 1):
+    loadDir = ""
+    saveDir = ""
+    fullCommand = []
+    fullCommandBenchmark = []
+    for i in range(startingIteration, endingIteration + 1):
+        with open(os.path.join("logs", f"{initialExpName}-log.txt"), "a") as f:
             expName = initialExpName + f"_{i*arglist.num_episodes}"
             cmdExpName[1] = expName
             if i == 1:
