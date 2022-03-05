@@ -164,7 +164,7 @@ def custom_mlp_model_with_dropout(
         out = slim.fully_connected(out, num_outputs=128, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
-        out = slim.dropout(out, keep_prob=0.5, is_training=False)
+        out = slim.dropout(out, keep_prob=0.5, is_training=True)
         out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
         return out
 
@@ -202,7 +202,7 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist, dropout=False):
         trainers.append(
             trainer(
                 "agent_%d" % i,
-                custom_mlp_model if dropout else custom_mlp_model_with_dropout,
+                custom_mlp_model_with_dropout if dropout else custom_mlp_model,
                 # model,
                 obs_shape_n,
                 env.action_space,
