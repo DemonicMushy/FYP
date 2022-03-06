@@ -202,11 +202,19 @@ python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag
 python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 11 --end-iter 20 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_1 --initial-dir "./policy-lying1single_128_64_32_1" --benchmark only --benchmark-filecount 1
 
 
-python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 21 --end-iter 24 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_1 --initial-dir "./policy-lying1single_128_64_32_1" --benchmark only --benchmark-filecount 1
-python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 1 --end-iter 15 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_0 --initial-dir "./policy-lying1single_128_64_32_0" --benchmark only --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 21 --end-iter 24 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_1 --initial-dir "./policy-lying1single_128_64_32_1" --benchmark only --benchmark-filecount 1 &&
+curl -X POST -d 'message=left 1 done' 192.168.0.174:50500/notify &&
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 1 --end-iter 15 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_0 --initial-dir "./policy-lying1single_128_64_32_0" --benchmark only --benchmark-filecount 1 &&
+curl -X POST -d 'message=left 2 done' 192.168.0.174:50500/notify &&
+python runMultipleExps.py --file runExperiments.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name commDropout_128_64_32_2 --initial-dir "./policy-commDropout_128_64_32_2" --benchmark-filecount 1 &&
+curl -X POST -d 'message=left 3 done' 192.168.0.174:50500/notify
 --
-python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 25 --end-iter 29 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_1 --initial-dir "./policy-lying1single_128_64_32_1" --benchmark only --benchmark-filecount 1
-python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 16 --end-iter 29 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_0 --initial-dir "./policy-lying1single_128_64_32_0" --benchmark only --benchmark-filecount 1
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 25 --end-iter 29 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_1 --initial-dir "./policy-lying1single_128_64_32_1" --benchmark only --benchmark-filecount 1 &&
+curl -X POST -d 'message=right 1 done' 192.168.0.174:50500/notify &&
+python runMultipleExps.py --file runExperiments2.py --file-runs 5 --scenario tag_s_lying1single --start-iter 16 --end-iter 29 --num-episodes 2000 --initial-exp-name lying1single_128_64_32_0 --initial-dir "./policy-lying1single_128_64_32_0" --benchmark only --benchmark-filecount 1 &&
+curl -X POST -d 'message=right 2 done' 192.168.0.174:50500/notify &&
+python runMultipleExps.py --file runExperiments.py --file-runs 5 --scenario tag_s_comm --start-iter 1 --end-iter 30 --num-episodes 2000 --initial-exp-name commDropout_128_64_32_3 --initial-dir "./policy-commDropout_128_64_32_3" --benchmark-filecount 1 &&
+curl -X POST -d 'message=right 3 done' 192.168.0.174:50500/notify
 
 
-curl -X POST -d 'message=right done' 192.168.0.174:50500/notify
+curl -X POST -d 'message=done' 192.168.0.174:50500/notify
