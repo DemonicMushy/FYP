@@ -144,9 +144,27 @@ def custom_mlp_model(
     with tf.compat.v1.variable_scope(scope, reuse=reuse):
         out = input
         out = slim.fully_connected(out, num_outputs=128, activation_fn=tf.nn.relu)
-        out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
-        out = slim.fully_connected(out, num_outputs=48, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
+        return out
+
+
+def custom_mlp_model_with_dropout(
+    input,
+    num_outputs,
+    scope,
+    reuse=False,
+    num_units=64,
+    rnn_cell=None,
+):
+    # This model takes as input an observation and returns values of all actions
+    with tf.compat.v1.variable_scope(scope, reuse=reuse):
+        out = input
+        out = slim.fully_connected(out, num_outputs=128, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
+        out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
+        out = slim.dropout(out, keep_prob=0.5, is_training=True)
         out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
         return out
 
@@ -175,7 +193,7 @@ def make_env(scenario_name, arglist, benchmark=False):
     return env
 
 
-def get_trainers(env, num_adversaries, obs_shape_n, arglist):
+def get_trainers(env, num_adversaries, obs_shape_n, arglist, dropout=False):
     trainers = []
     model = mlp_model
     trainer = MADDPGAgentTrainer
@@ -184,7 +202,7 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
         trainers.append(
             trainer(
                 "agent_%d" % i,
-                custom_mlp_model,
+                custom_mlp_model_with_dropout if dropout else custom_mlp_model,
                 # model,
                 obs_shape_n,
                 env.action_space,
@@ -222,7 +240,9 @@ def train(arglist):
         # Create agent trainers
         obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
         num_adversaries = min(env.n, arglist.num_adversaries)
-        trainers = get_trainers(env, num_adversaries, obs_shape_n, arglist)
+        trainers = get_trainers(
+            env, num_adversaries, obs_shape_n, arglist, dropout=arglist.benchmark
+        )
         print(
             "Using good policy {} and adv policy {}".format(
                 arglist.good_policy, arglist.adv_policy
