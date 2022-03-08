@@ -4,6 +4,7 @@ experiments/learning_curves*
 experiments/logs*
 experiments/policies_archive/
 experiments/benchmark.csv
+experiments/temp/
 
 .vscode
 *.DS_Store
