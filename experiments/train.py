@@ -146,6 +146,7 @@ def custom_mlp_model(
         out = slim.fully_connected(out, num_outputs=128, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=64, activation_fn=tf.nn.relu)
         out = slim.fully_connected(out, num_outputs=32, activation_fn=tf.nn.relu)
+        out = slim.dropout(out, keep_prob=0.5, is_training=False)
         out = slim.fully_connected(out, num_outputs=num_outputs, activation_fn=None)
         return out
 
@@ -241,7 +242,7 @@ def train(arglist):
         obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
         num_adversaries = min(env.n, arglist.num_adversaries)
         trainers = get_trainers(
-            env, num_adversaries, obs_shape_n, arglist, dropout=arglist.benchmark
+            env, num_adversaries, obs_shape_n, arglist, dropout=(not arglist.benchmark)
         )
         print(
             "Using good policy {} and adv policy {}".format(
