@@ -1,6 +1,8 @@
 import numpy as np
 from multiagent.core import Agent, Landmark
 
+# zxcv ###
+# random utility code 
 
 def unit_vector(vector):
     """Returns the unit vector of the vector."""

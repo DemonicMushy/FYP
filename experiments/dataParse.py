@@ -80,16 +80,15 @@ if __name__ == "__main__":
     fileDir = "./benchmark_files/"
     experiments = parseFiles(fileDir)
     bucketSize = 1000
-    df = pd.DataFrame(
-        columns=[
-            "Scenario",
-            "Total Episodes",
-            # "Num Captures",
-            "Capture Rate",
-            # f"Mean (Per {bucketSize})",
-            f"Std (Per {bucketSize})",
-        ]
-    )
+    columns = [
+        "Scenario",
+        "Total Episodes",
+        # "Num Captures",
+        "Capture Rate",
+        # f"Mean (Per {bucketSize})",
+        f"Std (Per {bucketSize})",
+    ]
+    df = pd.DataFrame(columns=columns)
 
     for exp in experiments:
         getTotalEpisodesWithCaptures(experiments[exp])
@@ -109,7 +108,9 @@ if __name__ == "__main__":
             # f"Mean (Per {bucketSize})": experiments[exp]["mean"],
             f"Std (Per {bucketSize})": "{:.2f}".format(experiments[exp]["std"]),
         }
-        df = df.append(dict1, ignore_index=True)
+        # df = df.append(dict1, ignore_index=True)
+        temp_df = pd.DataFrame(dict1, columns=columns, index=[0])
+        df = pd.concat([df, temp_df])
     pd.set_option("display.max_rows", None)
     df.set_index("Scenario", inplace=True)
 

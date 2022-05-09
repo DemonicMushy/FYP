@@ -198,7 +198,7 @@ class MultiAgentEnv(gym.Env):
             action = action[1:]
         # make sure we used all elements of action
         assert len(action) == 0
-        ##############################################
+        # zxcv ##############################################
         # hardcoded lying strat 1 for adversaries
         # these are the indexes of the obs space to get its own dist to target
         # communicated by other agents

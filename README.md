@@ -1,6 +1,18 @@
+[GitHub Link to Repo](https://github.com/DemonicMushy/FYP)
+
+
 This code is based off [OpenAI's MADDPG implementation](https://github.com/openai/maddpg/). A copy of its README can be found [below](#multi-agent-deep-deterministic-policy-gradient-maddpg).
 
-### Examples
+## Dependencies and Versions
+
+- Experiemnts were conducted with these: Python (3.9.7), OpenAI gym (0.21.0), tensorflow (2.6.0), tf-slim (1.1.0), numpy (1.19.5)
+
+## Tensorflow v1 to v2
+
+The original repo was written for Tensorflow v1. Hence I had to follow [this process](https://www.tensorflow.org/guide/migrate) to migrate to v2, and hence the need for `tf-slim` package.
+
+
+## Examples
 Be sure that your directory is at `experiments` before running the example commands
 ```
 cd experiments
@@ -21,11 +33,97 @@ Example to run benchmark
 python train3.py --num-adversaries 3 --num-episodes 10000 --num-units 64 --scenario tag_s_comm --load-dir ./policy-tag_s_comm_10000/ --exp-name tag_s_comm_10000 --benchmark
 ```
 
-### Difference between train, train2, train3
+## Difference between train, train2, train3 (`./experiments/`)
 
-`train3.py` is using the original 2 layer ReLU MLP.
+`train3.py` is using the original 2 layer ReLU MLP. Do reference to this to compare the difference between the others
 
 `train2.py` and `train.py` is where I manually change the number of layers and number of units of each layer (hence arguments --num-units and such is rendered useless for these two)
+- see function `custom_mlp_model` and related where the neural network configuration is defined
+- see function `get_trainers` where it is used
+
+
+## Important files to look at
+
+- `./multiagent/environment.py`
+  - Find `# zxcv` to refer to area where I added code, everything else should be from the original code (do compare it yourself to be sure)
+  - This is where the calculations for the adversaries' communicated values happen (!)
+- `./multiagent/core.py`
+  - To understand more about the entities in the environments
+  - No changes to code from original 
+
+<br>
+
+## What are `runExperiments?.py` and `runMultipleExps.py` for?
+
+*Suggest that you understaind `train.py` and scenarios first before caring about these files.*
+
+`runExperiments?.py`: These files are scripts to basically run the `train?.py` scripts sequentially so that I can train for 2,000 episodes, then evaluate, then train another 2,000, then evaluate again, and so on.
+- It is a very rough and dirty script that I made, so you should definitely look through and understand it first if you want to use it
+- Do take note of the `parse_args` and `parse_args_other` and notice that they may be different
+
+`runMultipleExps.py`: This file is a script to run multiple `runExperiments?.py` scripts.
+- Once again it is rough and dirty script, so use with caution
+- Do take note of the `parse_args` and `parse_args_other` and notice that they may be different
+
+<br>
+
+## Scenarios explained (`./multiagent/scenarios/`)
+
+Do compare the differences in the lines of codes between scenarios to understand where there are changes (mainly found in the adversary observation space function, and make_world function)
+
+`diff <filename> <filename2>` is a good way to view the file differences.
+
+#### simple*.py
+The original scenarios from the MPE repository.
+
+#### tag_s_base.py
+The base scenario from `simple_tag.py`
+
+#### tag_s_base_wDistance.py
+The Distance scenario mentioned in the report.
+
+#### tag_s_comm.py
+The Communication scenario mentioned in the report.
+
+#### tag_s_los_*.py
+Copies of the above scenarios but with Line-Of-Sight (LOS) blocking. (UNUSED AND NOT REFERENCE IN REPORT)
+
+#### tag_s_lying1.py
+The Communication scenario with lying enabled (all adversary can lie).
+
+#### tag_s_lying1single.py
+The Communication scenario with lying enabled (single liar).
+
+
+<br>
+
+## Evaluation Related
+
+The script `dataPase.py` was made to parse through the individual `*.pkl` files generated during the benchmarking step of `train?.py` and output a csv file with the compiled results.
+
+
+<br>
+
+## `commands.txt`
+
+This text file contains most of the command line entries I used in the process of my FYP. The earlier in the file, the less likely to make any sense, so don't fret if it doesn't make sense. 
+
+Do only use the most latest entries as a reference to the command line arguments I passed to the various scripts.
+
+<br>
+
+## Do take note:
+
+"--use-same-good-agents" argument
+- This option was suppose to allow evaluation of different adversary agent policies against the same policy for good agents
+- The good agent policy file location was suppose to be changed inside `train?.py` itself
+- This option has not been touched or used for some time so I cannot guarentee its functionality
+
+Some defaults
+- Training episodes: every 2,000 until 60,000
+
+---
+The section below is the README of the [original maddpg repo](https://github.com/openai/maddpg/) excluding the citation portion.
 
 ---
 
@@ -129,16 +227,3 @@ has been provided), but does not continue training (default: `False`)
 - `./maddpg/common/tf_util.py`: useful tensorflow functions used in `maddpg.py`
 
 
-
-## Paper citation
-
-If you used this code for your experiments or found it helpful, consider citing the following paper:
-
-<pre>
-@article{lowe2017multi,
-  title={Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments},
-  author={Lowe, Ryan and Wu, Yi and Tamar, Aviv and Harb, Jean and Abbeel, Pieter and Mordatch, Igor},
-  journal={Neural Information Processing Systems (NIPS)},
-  year={2017}
-}
-</pre>

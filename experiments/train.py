@@ -350,6 +350,10 @@ def train(arglist):
                 #     with open(file_name, 'wb') as fp:
                 #         pickle.dump(agent_info[:-1], fp)
                 #     break
+
+                # zxcv ##########################
+                # where I determine if collision occurs
+                # output benchmark results to a .pkl file
                 def is_collision(agent1, agent2):
                     delta_pos = agent1.state.p_pos - agent2.state.p_pos
                     dist = np.sqrt(np.sum(np.square(delta_pos)))
@@ -372,6 +376,7 @@ def train(arglist):
                     benchmark_count += 1
                     num = 10000  # save every num episodes
                     if benchmark_count % num == 0:
+                        # every num episodes, write to file
                         file_name = (
                             arglist.benchmark_dir
                             + arglist.exp_name
